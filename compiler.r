@@ -820,7 +820,7 @@ red: context [
 		reduce [var set-var]
 	]
 	
-	add-symbol: func [name [word!] /with original /local sym id alias][
+	add-symbol: func [name [word! path!] /with original /local sym id alias][
 		unless find/case symbols name [
 			if find symbols name [
 				if find/case/skip aliases name 2 [exit]
@@ -1077,10 +1077,29 @@ red: context [
 	]
 	
 	infix?: func [pos [block! paren!] /local specs left][
+        if (pos == [a/b 5]) [
+            print "######################################################################"
+            print "POS IS:"
+            probe pos
+            probe pos/1
+
+            print " "
+            probe not tail? pos
+            probe any [word? pos/1 path? pos/1]
+            probe specs: select functions either (path? pos/1) [back tail pos/1] [pos/1]
+            ?? specs
+            probe 'op! = specs/1
+			probe not all [									;-- check if a literal argument is not expected
+				word? left: pos/-1
+				not local-word? left
+				specs: select functions left
+				literal-first-arg? specs/3				;-- literal arg needed, disable infix mode
+			]
+        ]
 		all [
 			not tail? pos
-			word? pos/1
-			specs: select functions pos/1
+			any [word? pos/1 path? pos/1]
+			specs: select functions either (path? pos/1) [back tail pos/1] [pos/1]
 			'op! = specs/1
 			not all [									;-- check if a literal argument is not expected
 				word? left: pos/-1
@@ -3830,6 +3849,8 @@ red: context [
 	][
 		if infix? pc [return false]						;-- infix op already processed,
 														;-- or used in prefix mode.
+
+        print "pc in check-infix-operators:"
 		if infix? next pc [
 			substitute: [
 				if paths < length? paths-stack [
@@ -3844,7 +3865,11 @@ red: context [
 			end: search-expr-end pos					;-- recursive search of expression end
 			
 			ops: make block! 1
-			pos: end									;-- start from end of expression
+			pos: end
+            if (next pc) == [a/b 5] [
+                probe pos
+                probe pos/-1
+            ]									;-- start from end of expression
 			until [
 				op: pos/-1			
 				name: any [select op-actions op op]
@@ -4270,6 +4295,8 @@ red: context [
 		root: to logic! root 
 		if any [root close-path][out: tail output]
 		paths: length? paths-stack
+
+        print "in comp-expression"
 		
 		unless no-infix [
 			if check-infix-operators root [
@@ -4405,9 +4432,16 @@ red: context [
 			exit
 		]
 		while [not tail? pc][
+            print ""
+            print "####################"
+            print "looping over pc"
+            ?? pc
 			expr: pc
+            ?? expr
 			either no-root [comp-expression][comp-expression/root]
-			
+            ?? expr
+            print " "
+			; offset? x y returns how far y is infront of x
 			if all [verbose > 3 positive? size: offset? expr pc][probe copy/part expr size]
 			if verbose > 0 [emit-src-comment expr]
 			
@@ -4548,6 +4582,8 @@ red: context [
 		booting?: yes
 		comp-block
 		booting?: no
+
+        ?? code
 		
 		mods: tail output
 		append output [#user-code]
@@ -4562,7 +4598,11 @@ red: context [
 
 		pc: code										;-- compile user code
 		user: tail output
+
+        print "##################################################################compiling user code"
 		comp-block
+        ?? functions
+        probe "output2d:" ?? output
 		append output [#user-code]
 		
 		main: output
