@@ -18,63 +18,17 @@ Script: "Encap virtual filesystem" (21-Sep-2009)
 
 -=== Red Compiler 0.6.4 ===- 
 
-Compiling /home/nathan/repos/red/opTest.red ...
-...using libRedRT built on 9-Apr-2019/22:20:32+1:00
-
-####################
-looping over pc
-pc: [
-    system/script/args: #system [
-        #either type = 'exe [stack/push get-cmdline-args] [none/push]
-    ] extract-boot-args
-]
-expr: [
-    system/script/args: #system [
-        #either type = 'exe [stack/push get-cmdline-args] [none/push]
-    ] extract-boot-args
-]
+Compiling /home/nathan/repos/nd9600/myred/objOpTest.red ...
+...using libRedRT built on 10-Apr-2019/10:23:40+1:00
 in comp-expression
 pc in check-infix-operators:
 in comp-expression
 pc in check-infix-operators:
-expr: [
-    system/script/args: #system [
-        #either type = 'exe [stack/push get-cmdline-args] [none/push]
-    ] extract-boot-args
-]
  
-
-####################
-looping over pc
-pc: [extract-boot-args]
-expr: [extract-boot-args]
 in comp-expression
 pc in check-infix-operators:
-expr: [extract-boot-args]
  
-code: [
-    a: context [b: make op! function [x y] [x + y]] 
-    probe 4 a/b 5
-]
 ##################################################################compiling user code
-
-####################
-looping over pc
-pc: [
-    a: context [b: make op! function [x y] [x + y]] 
-    probe 4 a/b 5
-]
-expr: [
-    a: context [b: make op! function [x y] [x + y]] 
-    probe 4 a/b 5
-]
-in comp-expression
-pc in check-infix-operators:
-
-####################
-looping over pc
-pc: [b: make op! function [x y] [x + y]]
-expr: [b: make op! function [x y] [x + y]]
 in comp-expression
 pc in check-infix-operators:
 in comp-expression
@@ -83,22 +37,10 @@ in comp-expression
 pc in check-infix-operators:
 in comp-expression
 pc in check-infix-operators:
-expr: [b: make op! function [x y] [x + y]]
+in comp-expression
+pc in check-infix-operators:
  
-expr: [
-    a: context [b: make op! function [x y] [x + y]] 
-    probe 4 a/b 5
-]
  
-
-####################
-looping over pc
-pc: [
-    probe 4 a/b 5
-]
-expr: [
-    probe 4 a/b 5
-]
 in comp-expression
 pc in check-infix-operators:
 in comp-expression

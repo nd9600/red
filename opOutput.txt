@@ -18,92 +18,32 @@ Script: "Encap virtual filesystem" (21-Sep-2009)
 
 -=== Red Compiler 0.6.4 ===- 
 
-Compiling /home/nathan/repos/red/opTest.red ...
-...using libRedRT built on 9-Apr-2019/22:20:32+1:00
-
-####################
-looping over pc
-pc: [
-    system/script/args: #system [
-        #either type = 'exe [stack/push get-cmdline-args] [none/push]
-    ] extract-boot-args
-]
-expr: [
-    system/script/args: #system [
-        #either type = 'exe [stack/push get-cmdline-args] [none/push]
-    ] extract-boot-args
-]
+Compiling /home/nathan/repos/nd9600/myred/opTest.red ...
+...using libRedRT built on 10-Apr-2019/10:23:40+1:00
 in comp-expression
 pc in check-infix-operators:
 in comp-expression
 pc in check-infix-operators:
-expr: [
-    system/script/args: #system [
-        #either type = 'exe [stack/push get-cmdline-args] [none/push]
-    ] extract-boot-args
-]
  
-
-####################
-looping over pc
-pc: [extract-boot-args]
-expr: [extract-boot-args]
 in comp-expression
 pc in check-infix-operators:
-expr: [extract-boot-args]
  
-code: [
-    a: context [b: function [x y] [x + y]] 
-    probe a/b 4 5
-]
 ##################################################################compiling user code
-
-####################
-looping over pc
-pc: [
-    a: context [b: function [x y] [x + y]] 
-    probe a/b 4 5
-]
-expr: [
-    a: context [b: function [x y] [x + y]] 
-    probe a/b 4 5
-]
 in comp-expression
 pc in check-infix-operators:
-
-####################
-looping over pc
-pc: [b: function [x y] [x + y]]
-expr: [b: function [x y] [x + y]]
 in comp-expression
 pc in check-infix-operators:
-expr: [b: function [x y] [x + y]]
+in comp-expression
+pc in check-infix-operators:
+in comp-expression
+pc in check-infix-operators:
  
-expr: [
-    a: context [b: function [x y] [x + y]] 
-    probe a/b 4 5
-]
- 
-
-####################
-looping over pc
-pc: [
-    probe a/b 4 5
-]
-expr: [
-    probe a/b 4 5
-]
 in comp-expression
 pc in check-infix-operators:
 in comp-expression
 pc in check-infix-operators:
 in comp-expression
-pc in check-infix-operators:
 in comp-expression
-pc in check-infix-operators:
-expr: [
-    probe a/b 4 5
-]
  
 functions: make hash! [
     make [action! 2 [type [datatype! word!] spec [any-type!]] none] 
@@ -181,7 +121,7 @@ functions: make hash! [
     do [native! 1 [{Evaluates a value, returning the last evaluation result} value [any-type!] /expand "Expand directives before evaluation" /args {If value is a script, this will set its system/script/args} arg "Args passed to a script (normally a string)" /next {Do next expression only, return it, update block word} position [word!] "Word updated with new block position"] [/expand 1 0 /args 2 1 /next 3 1]] 
     reduce [intrinsic! 1 [{Returns a copy of a block, evaluating all expressions} value [any-type!] /into {Put results in out block, instead of creating a new block} out [any-block!] "Target block for results, when /into is used"] [/into 1 1]] 
     compose [native! 1 ["Returns a copy of a block, evaluating only parens" value /deep "Compose nested blocks" /only {Compose nested blocks as blocks containing their values} /into {Put results in out block, instead of creating a new block} out [any-block!] "Target block for results, when /into is used"] [/deep 1 0 /only 2 0 /into 3 1]] 
-    get [intrinsic! 1 ["Returns the value a word refers to" word [path! word!] /any {If word has no value, return UNSET rather than causing an error} /case "Use case-sensitive comparison (path only)" return: [any-type!]] [/any 1 0 /case 2 0]] 
+    get [intrinsic! 1 ["Returns the value a word refers to" word [object! path! word!] /any {If word has no value, return UNSET rather than causing an error} /case "Use case-sensitive comparison (path only)" return: [any-type!]] [/any 1 0 /case 2 0]] 
     set [intrinsic! 2 ["Sets the value(s) one or more words refer to" word [any-word! block! object! path!] "Word, object, map path or block of words to set" value [any-type!] "Value or block of values to assign to words" /any {Allow UNSET as a value rather than causing an error} /case "Use case-sensitive comparison (path only)" /only {Block or object value argument is set as a single value} /some {None values in a block or object value argument, are not set} return: [any-type!]] [/any 1 0 /case 2 0 /only 3 0 /some 4 0]] 
     print [native! 1 ["Outputs a value followed by a newline" value [any-type!]] none] 
     prin [native! 1 ["Outputs a value" value [any-type!]] none] 
@@ -209,7 +149,7 @@ functions: make hash! [
     union [native! 2 ["Returns the union of two data sets" set1 [bitset! block! hash! string! typeset!] set2 [bitset! block! hash! string! typeset!] /case "Use case-sensitive comparison" /skip "Treat the series as fixed size records" size [integer!] return: [block! hash! string! bitset! typeset!]] [/case 1 0 /skip 2 1]] 
     unique [native! 1 ["Returns the data set with duplicates removed" set [block! hash! string!] /case "Use case-sensitive comparison" /skip "Treat the series as fixed size records" size [integer!] return: [block! hash! string!]] [/case 1 0 /skip 2 1]] 
     intersect [native! 2 ["Returns the intersection of two data sets" set1 [bitset! block! hash! string! typeset!] set2 [bitset! block! hash! string! typeset!] /case "Use case-sensitive comparison" /skip "Treat the series as fixed size records" size [integer!] return: [block! hash! string! bitset! typeset!]] [/case 1 0 /skip 2 1]] 
-    difference [native! 2 ["Returns the special difference of two data sets" set1 [bitset! block! date! hash! string! typeset!] set2 [bitset! block! date! hash! string! typeset!] /case "Use case-sensitive comparison" /skip "Treat the series as fixed size records" size [integer!] return: [block! hash! string! bitset! typeset!]] [/case 1 0 /skip 2 1]] 
+    difference [native! 2 ["Returns the special difference of two data sets" set1 [bitset! block! date! hash! string! typeset!] set2 [bitset! block! date! hash! string! typeset!] /case "Use case-sensitive comparison" /skip "Treat the series as fixed size records" size [integer!] return: [block! hash! string! bitset! typeset! time!]] [/case 1 0 /skip 2 1]] 
     exclude [native! 2 [{Returns the first data set less the second data set} set1 [bitset! block! hash! string! typeset!] set2 [bitset! block! hash! string! typeset!] /case "Use case-sensitive comparison" /skip "Treat the series as fixed size records" size [integer!] return: [block! hash! string! bitset! typeset!]] [/case 1 0 /skip 2 1]] 
     complement? [native! 1 ["Returns TRUE if the bitset is complemented" bits [bitset!]] none] 
     dehex [native! 1 ["Converts URL-style hex encoded (%xx) strings" value [any-string!] return: [string!] "Always return a string"] none] 
@@ -222,10 +162,10 @@ functions: make hash! [
     sine [native! 1 ["Returns the trigonometric sine" angle [number!] /radians "Angle is specified in radians" return: [float!]] [/radians 1 0]] 
     cosine [native! 1 ["Returns the trigonometric cosine" angle [number!] /radians "Angle is specified in radians" return: [float!]] [/radians 1 0]] 
     tangent [native! 1 ["Returns the trigonometric tangent" angle [number!] /radians "Angle is specified in radians" return: [float!]] [/radians 1 0]] 
-    arcsine [native! 1 [{Returns the trigonometric arcsine (in degrees by default)} value [number!] /radians "Angle is returned in radians" return: [float!]] [/radians 1 0]] 
-    arccosine [native! 1 [{Returns the trigonometric arccosine (in degrees by default)} value [number!] /radians "Angle is returned in radians" return: [float!]] [/radians 1 0]] 
-    arctangent [native! 1 [{Returns the trigonometric arctangent (in degrees by default)} value [number!] /radians "Angle is returned in radians" return: [float!]] [/radians 1 0]] 
-    arctangent2 [native! 2 [{Returns the smallest angle between the X axis and the point (x,y) (-pi to pi)} y [number!] x [number!] return: [float!]] none] 
+    arcsine [native! 1 [{Returns the trigonometric arcsine (in degrees by default in range [-90,90])} sine [number!] "in range [-1,1]" /radians "Angle is returned in radians [-pi/2,pi/2]" return: [float!]] [/radians 1 0]] 
+    arccosine [native! 1 [{Returns the trigonometric arccosine (in degrees by default in range [0,180])} cosine [number!] "in range [-1,1]" /radians "Angle is returned in radians [0,pi]" return: [float!]] [/radians 1 0]] 
+    arctangent [native! 1 [{Returns the trigonometric arctangent (in degrees by default in range [-90,90])} tangent [number!] "in range [-inf,+inf]" /radians "Angle is returned in radians [-pi/2,pi/2]" return: [float!]] [/radians 1 0]] 
+    arctangent2 [native! 2 [{Returns the smallest angle between the vectors (1,0) and (x,y) in degrees by default (-180,180]} y [number!] x [number!] /radians "Angle is returned in radians (-pi,pi]" return: [float!]] [/radians 1 0]] 
     NaN? [native! 1 ["Returns TRUE if the number is Not-a-Number" value [number!] return: [logic!]] none] 
     zero? [native! 1 ["Returns TRUE if the value is zero" value [char! number! pair! time! tuple!] return: [logic!]] none] 
     log-2 [native! 1 ["Return the base-2 logarithm" value [number!] return: [float!]] none] 
@@ -317,7 +257,7 @@ functions: make hash! [
         ] none] 
     read-clipboard [routine! 0 ["Return the contents of the system clipboard"] none] 
     write-clipboard [routine! 1 ["Write content to the system clipboard" data [red-string!]] none] 
-    write-stdout [routine! 1 ["Write data to STDOUT" str [red-string!]] none] 
+    write-stdout [routine! 1 ["Write data to STDOUT" data [red/cell!]] none] 
     routine [function! 2 [{Defines a function with a given Red spec and Red/System body} spec [block!] body [block!]] none] 
     alert [function! 1 [msg [block! string!]] none] 
     also [function! 2 [
@@ -340,8 +280,8 @@ functions: make hash! [
             /return 1 1
         ]] 
     empty? [function! 1 [
-            "Returns true if a series is at its tail" 
-            series [none! series!] 
+            {Returns true if a series is at its tail or a map! is empty} 
+            series [map! none! series!] 
             return: [logic!]
         ] none] 
     ?? [function! 1 [
@@ -826,19 +766,19 @@ functions: make hash! [
             angle [float!] "Angle in radians"
         ] none] 
     acos [function! 1 [
-            "Returns the trigonometric arccosine" 
-            angle [float!] "Angle in radians"
+            {Returns the trigonometric arccosine (in radians in range [0,pi])} 
+            cosine [float!] "in range [-1,1]"
         ] none] 
     asin [function! 1 [
-            "Returns the trigonometric arcsine" 
-            angle [float!] "Angle in radians"
+            {Returns the trigonometric arcsine (in radians in range [-pi/2,pi/2])} 
+            sine [float!] "in range [-1,1]"
         ] none] 
     atan [function! 1 [
-            "Returns the trigonometric arctangent" 
-            angle [float!] "Angle in radians"
+            {Returns the trigonometric arctangent (in radians in range [-pi/2,+pi/2])} 
+            tangent [float!] "in range [-inf,+inf]"
         ] none] 
     atan2 [function! 2 [
-            "Returns the angle of the point y/x in radians" 
+            {Returns the smallest angle between the vectors (1,0) and (x,y) in range (-pi,pi]} 
             y [number!] 
             x [number!] 
             return: [float!]
@@ -871,6 +811,10 @@ functions: make hash! [
             "Returns the average of all values in a block" 
             block [block! hash! paren! vector!]
         ] none] 
+    last? [function! 1 [
+            "Returns TRUE if the series length is 1" 
+            series [series!]
+        ] none] 
     keys-of [function! 1 [{Returns the list of words of a value that supports reflection} value] none] 
     object [function! 1 [
             "Makes a new object from an evaluated spec" 
@@ -882,19 +826,19 @@ functions: make hash! [
         ] [
             /return 1 1
         ]] 
-    ctx209~platform [function! 0 ["Return a word identifying the operating system"] none] 
-    ctx238~interpreted? [function! 0 ["Return TRUE if called from the interpreter"] none] 
-    ctx249~on-change* [function! 3 [word old new] none] 
-    ctx247~on-change* [function! 3 [word old new] none] 
-    ctx247~on-deep-change* [function! 7 [owner word target action new index part] none] 
-    ctx264~throw-error [function! 1 [spec [block!] /missing 
+    ctx210~platform [function! 0 ["Return a word identifying the operating system"] none] 
+    ctx239~interpreted? [function! 0 ["Return TRUE if called from the interpreter"] none] 
+    ctx250~on-change* [function! 3 [word old new] none] 
+    ctx248~on-change* [function! 3 [word old new] none] 
+    ctx248~on-deep-change* [function! 7 [owner word target action new index part] none] 
+    ctx265~throw-error [function! 1 [spec [block!] /missing 
             /local type src pos
         ] [/missing 1 0]] 
-    ctx264~make-hm [routine! 2 [h [integer!] m [integer!]] none] 
-    ctx264~make-msf [routine! 2 [m [integer!] s [float!]] none] 
-    ctx264~make-hms [routine! 3 [h [integer!] m [integer!] s [integer!]] none] 
-    ctx264~make-hmsf [routine! 3 [h [integer!] m [integer!] s [float!]] none] 
-    ctx264~make-time [function! 5 [
+    ctx265~make-hm [routine! 2 [h [integer!] m [integer!]] none] 
+    ctx265~make-msf [routine! 2 [m [integer!] s [float!]] none] 
+    ctx265~make-hms [routine! 3 [h [integer!] m [integer!] s [integer!]] none] 
+    ctx265~make-hmsf [routine! 3 [h [integer!] m [integer!] s [float!]] none] 
+    ctx265~make-time [function! 5 [
             pos [string!] 
             hours [integer! none!] 
             mins [integer!] 
@@ -903,7 +847,7 @@ functions: make hash! [
             return: [time!] 
             /local time
         ] none] 
-    ctx264~make-binary [routine! 3 [
+    ctx265~make-binary [routine! 3 [
             start [red-string!] 
             end [red-string!] 
             base [integer!] 
@@ -914,7 +858,7 @@ functions: make hash! [
             unit [integer!] 
             ret [red-binary!]
         ] none] 
-    ctx264~make-tuple [routine! 2 [
+    ctx265~make-tuple [routine! 2 [
             start [red-string!] 
             end [red-string!] 
             /local 
@@ -926,7 +870,7 @@ functions: make hash! [
             tp [pointer! [byte!]] 
             ret [red/cell!]
         ] none] 
-    ctx264~make-number [routine! 3 [
+    ctx265~make-number [routine! 3 [
             start [red-string!] 
             end [red-string!] 
             type [red-datatype!] 
@@ -938,7 +882,7 @@ functions: make hash! [
             err [integer!] 
             i [integer!]
         ] none] 
-    ctx264~make-float [routine! 3 [
+    ctx265~make-float [routine! 3 [
             start [red-string!] 
             end [red-string!] 
             type [red-datatype!] 
@@ -950,7 +894,7 @@ functions: make hash! [
             err [integer!] 
             f [float!]
         ] none] 
-    ctx264~make-hexa [routine! 2 [
+    ctx265~make-hexa [routine! 2 [
             start [red-string!] 
             end [red-string!] 
             return: [integer!] 
@@ -964,47 +908,47 @@ functions: make hash! [
             power [integer!] 
             cp [byte!]
         ] none] 
-    ctx264~make-char [routine! 2 [
+    ctx265~make-char [routine! 2 [
             start [red-string!] 
             end [red-string!] 
             /local 
             n [integer!] 
             value [red/cell!]
         ] none] 
-    ctx264~push-path [routine! 2 [
+    ctx265~push-path [routine! 2 [
             stack [red-block!] 
             type [red-datatype!] 
             /local 
             path [red-path!]
         ] none] 
-    ctx264~set-path [routine! 1 [
+    ctx265~set-path [routine! 1 [
             stack [red-block!] 
             /local 
             path [red-path!]
         ] none] 
-    ctx264~make-word [routine! 2 [
+    ctx265~make-word [routine! 2 [
             src [red-string!] 
             type [red-datatype!]
         ] none] 
-    ctx264~to-word [function! 3 [
+    ctx265~to-word [function! 3 [
             stack [block!] 
             src [string!] 
             type [datatype!]
         ] none] 
-    ctx264~pop [function! 1 [stack [block!] 
+    ctx265~pop [function! 1 [stack [block!] 
             /local value pos
         ] none] 
-    ctx264~store [function! 2 [stack [block!] value 
+    ctx265~store [function! 2 [stack [block!] value 
             /local pos
         ] none] 
-    ctx264~new-line [routine! 1 [
+    ctx265~new-line [routine! 1 [
             series [red/cell!] 
             /local 
             blk [red-block!] 
             s [red/series-buffer!] 
             cell [red/cell!]
         ] none] 
-    ctx264~transcode [function! 3 [
+    ctx265~transcode [function! 3 [
             src [string!] 
             dst [block! none!] 
             trap [logic!] 
@@ -1051,30 +995,37 @@ functions: make hash! [
     and [op! 2 ["Returns the first value ANDed with the second" value1 [logic! integer! char! bitset! binary! typeset! pair! tuple! vector!] value2 [logic! integer! char! bitset! binary! typeset! pair! tuple! vector!] return: [logic! integer! char! bitset! binary! typeset! pair! tuple! vector!]] none] 
     or [op! 2 ["Returns the first value ORed with the second" value1 [logic! integer! char! bitset! binary! typeset! pair! tuple! vector!] value2 [logic! integer! char! bitset! binary! typeset! pair! tuple! vector!] return: [logic! integer! char! bitset! binary! typeset! pair! tuple! vector!]] none] 
     xor [op! 2 [{Returns the first value exclusive ORed with the second} value1 [logic! integer! char! bitset! binary! typeset! pair! tuple! vector!] value2 [logic! integer! char! bitset! binary! typeset! pair! tuple! vector!] return: [logic! integer! char! bitset! binary! typeset! pair! tuple! vector!]] none] 
-    ctx272~encode [routine! 2 [img [red-image!] where [red/cell!]] none] 
-    ctx272~decode [routine! 1 [data [red/cell!]] none] 
-    ctx275~encode [routine! 2 [img [red-image!] where [red/cell!]] none] 
-    ctx275~decode [routine! 1 [data [red/cell!]] none] 
-    ctx278~encode [routine! 2 [img [red-image!] where [red/cell!]] none] 
-    ctx278~decode [routine! 1 [data [red/cell!]] none] 
-    ctx281~encode [routine! 2 [img [red-image!] where [red/cell!]] none] 
-    ctx281~decode [routine! 1 [data [red/cell!]] none] 
-    ctx284~on-change* [function! 3 [word old new 
+    ctx273~encode [routine! 2 [img [red-image!] where [red/cell!]] none] 
+    ctx273~decode [routine! 1 [data [red/cell!]] none] 
+    ctx276~encode [routine! 2 [img [red-image!] where [red/cell!]] none] 
+    ctx276~decode [routine! 1 [data [red/cell!]] none] 
+    ctx279~encode [routine! 2 [img [red-image!] where [red/cell!]] none] 
+    ctx279~decode [routine! 1 [data [red/cell!]] none] 
+    ctx282~encode [routine! 2 [img [red-image!] where [red/cell!]] none] 
+    ctx282~decode [routine! 1 [data [red/cell!]] none] 
+    ctx285~on-change* [function! 3 [word old new 
             /local srs
         ] none] 
-    ctx287~on-change* [function! 3 [word old new 
+    ctx288~on-change* [function! 3 [word old new 
             /local srs
         ] none] 
-    ctx287~on-deep-change* [function! 7 [owner word target action new index part] none] 
-    ctx290~eval [function! 1 [code [block!] /safe 
+    ctx288~on-deep-change* [function! 7 [owner word target action new index part] none] 
+    ctx291~add-relation [function! 4 [
+            obj [object!] 
+            word [default!] 
+            reaction [block! function!] 
+            targets [block! none! object! set-word!] 
+            /local new-rel
+        ] none] 
+    ctx291~eval [function! 1 [code [block!] /safe 
             /local result
         ] [/safe 1 0]] 
-    ctx290~eval-reaction [function! 3 [reactor [object!] reaction [block! function!] target] none] 
-    ctx290~pending? [function! 3 [reactor [object!] reaction [block! function!] type [word!] 
-            /local step p
+    ctx291~eval-reaction [function! 3 [reactor [object!] reaction [block! function!] target /mark] [/mark 1 0]] 
+    ctx291~pending? [function! 2 [reactor [object!] reaction [block! function!] 
+            /local q
         ] none] 
-    ctx290~check [function! 1 [reactor [object!] /only field [set-word! word!] 
-            /local pos reaction q
+    ctx291~check [function! 1 [reactor [object!] /only field [set-word! word!] 
+            /local pos reaction q q'
         ] [/only 1 1]] 
     stop-reactor [function! 1 [
             face [object!] 
@@ -1082,18 +1033,18 @@ functions: make hash! [
             /local list pos f
         ] [
             /deep 1 0
-        ] ctx290] 
-    clear-reactions [function! 0 ["Removes all reactive relations"] none ctx290] 
+        ] ctx291] 
+    clear-reactions [function! 0 ["Removes all reactive relations"] none ctx291] 
     dump-reactions [function! 0 [
             {Output all the current reactive relations for debugging purpose} 
             /local limit count obj field reaction target list
-        ] none ctx290] 
-    ctx290~is~ [function! 2 [
+        ] none ctx291] 
+    ctx291~is~ [function! 2 [
             {Defines a reactive relation whose result is assigned to a word} 
             'field [set-word!] {Set-word which will get set to the result of the reaction} 
             reaction [block!] "Reactive relation" 
             /local words obj rule item
-        ] none ctx290] 
+        ] none ctx291] 
     is [op! 2 [
             {Defines a reactive relation whose result is assigned to a word} 
             'field [set-word!] {Set-word which will get set to the result of the reaction} 
@@ -1109,7 +1060,7 @@ functions: make hash! [
             /local pos
         ] [
             /target 1 0
-        ] ctx290] 
+        ] ctx291] 
     react [function! 1 [
             {Defines a new reactive relation between two or more objects} 
             reaction [block! function!] "Reactive relation" 
@@ -1127,20 +1078,20 @@ functions: make hash! [
             /unlink 2 1 
             /later 3 0 
             /with 4 1
-        ] ctx290] 
-    ctx302~do-quit [function! 0 [] none] 
-    ctx302~throw-error [function! 3 [error [error!] cmd [issue!] code [block!] /local w] none] 
-    ctx302~syntax-error [function! 2 [s [block! paren!] e [block! paren!]] none] 
-    ctx302~do-safe [function! 1 [code [block! paren!] /manual /with cmd [issue!] /local res t? src] [/manual 1 0 /with 2 1]] 
-    ctx302~do-code [function! 2 [code [block! paren!] cmd [issue!] /local p] none] 
-    ctx302~count-args [function! 1 [spec [block!] /local total] none] 
-    ctx302~func-arity? [function! 1 [spec [block!] /with path [path!] /local arity pos] [/with 1 1]] 
-    ctx302~fetch-next [function! 1 [code [block! paren!] /local base arity value path] none] 
-    ctx302~eval [function! 2 [code [block! paren!] cmd [issue!] /local after expr] none] 
-    ctx302~do-macro [function! 3 [name pos [block! paren!] arity [integer!] /local cmd saved p v res] none] 
-    ctx302~register-macro [function! 1 [spec [block!] /local cnt rule p name macro pos valid? named?] none] 
-    ctx302~reset [function! 1 [job [none! object!]] none] 
-    ctx302~expand [function! 2 [
+        ] ctx291] 
+    ctx304~do-quit [function! 0 [] none] 
+    ctx304~throw-error [function! 3 [error [error!] cmd [issue!] code [block!] /local w] none] 
+    ctx304~syntax-error [function! 2 [s [block! paren!] e [block! paren!]] none] 
+    ctx304~do-safe [function! 1 [code [block! paren!] /manual /with cmd [issue!] /local res t? src] [/manual 1 0 /with 2 1]] 
+    ctx304~do-code [function! 2 [code [block! paren!] cmd [issue!] /local p] none] 
+    ctx304~count-args [function! 1 [spec [block!] /local total] none] 
+    ctx304~func-arity? [function! 1 [spec [block!] /with path [path!] /local arity pos] [/with 1 1]] 
+    ctx304~fetch-next [function! 1 [code [block! paren!] /local base arity value path] none] 
+    ctx304~eval [function! 2 [code [block! paren!] cmd [issue!] /local after expr] none] 
+    ctx304~do-macro [function! 3 [name pos [block! paren!] arity [integer!] /local cmd saved p v res] none] 
+    ctx304~register-macro [function! 1 [spec [block!] /local cnt rule p name macro pos valid? named?] none] 
+    ctx304~reset [function! 1 [job [none! object!]] none] 
+    ctx304~expand [function! 2 [
             code [block!] job [none! object!] 
             /clean 
             /local rule e pos cond value then else cases body keep? expr src saved file
@@ -1154,9 +1105,10 @@ functions: make hash! [
             /local job
         ] [
             /clean 1 0
-        ] ctx302] 
-    image?||318 [function! 1 [value [any-type!]] none] 
-    keep [function! 1 [v /only] [/only 1 0]] ctx357~b [function! 2 [x y] none]
+        ] ctx304] 
+    image?||320 [function! 1 [value [any-type!]] none] 
+    keep [function! 1 [v /only] [/only 1 0]] 
+    b [op! 2 [x y] none] <anon361> [function! 2 [x y] none]
 ]
 "output2d:"
 output: [
@@ -1166,13 +1118,13 @@ output: [
     word/set 
     stack/unwind 
     stack/reset 
-    #script %/home/nathan/repos/red/opTest.red 
+    #script %/home/nathan/repos/nd9600/myred/opTest.red 
     #either type = 'exe [stack/push get-cmdline-args] [none/push] 
-    #script %/home/nathan/repos/red/opTest.red 
+    #script %/home/nathan/repos/nd9600/myred/opTest.red 
     either all [
-        object/unchanged? ~system 210 
-        object/unchanged2? ctx209 12 255
-    ] [word/set-in-ctx ctx254 4] [
+        object/unchanged? ~system 211 
+        object/unchanged2? ctx210 12 256
+    ] [word/set-in-ctx ctx255 4] [
         stack/mark-func ~eval-set-path exec/ctx175 
         if stack/arguments > stack/bottom [stack/push stack/arguments - 1] 
         object/path-parent/header: TYPE_NONE 
@@ -1182,69 +1134,60 @@ output: [
     stack/reset ------------| {system/script/args: #system [ #either type = 'exe ...} 
     stack/mark-func ~extract-boot-args exec/ctx183 
     f_extract-boot-args 
-    stack/unwind ------------| "extract-boot-args" #user-code ------------| "a: context [b]" 
-    stack/mark-native ~body 
+    stack/unwind ------------| "extract-boot-args" #user-code 
     stack/mark-native ~set 
-    _function/push get-root 2 get-root 3 ctx359 as integer! :f_ctx357~b ctx357 
-    word/set-in ctx357 0 
-    stack/unwind ------------| "b: function [x y] [x + y]" 
-    stack/revert 
-    stack/mark-native ~set 
-    word/push ~a 
-    object/init-push ctx357 358 false 
+    word/push ~b 
+    stack/mark-native ~make 
+    word/get ~op! 
+    _function/push get-root 1 get-root 2 ctx362 as integer! :f_<anon361> null 
+    actions/make* 
+    stack/unwind 
     word/set 
     stack/unwind 
-    stack/reset ------------| "a: context [b: function [x y] [x + y]]" 
+    stack/reset ------------| "b: make op! function [x y] [x + y]" 
     stack/mark-func ~probe exec/ctx56 
-    stack/mark-func ~b exec/ctx359 
+    stack/mark-native ~b 
     integer/push 4 
     integer/push 5 
-    f_ctx357~b ctx357 
+    f_<anon361> 
     stack/unwind 
     f_probe 
-    stack/unwind ------------| "probe a/b 4 5"
+    stack/unwind ------------| "probe 4 b 5"
 ]
-
-####################
-looping over pc
-pc: [x + y]
-expr: [x + y]
 in comp-expression
 pc in check-infix-operators:
 in comp-expression
 in comp-expression
-expr: [x + y]
  
-[------------| "a: context [b]" 
-    stack/mark-native ~body 
+[
     stack/mark-native ~set 
-    _function/push get-root 2 get-root 3 ctx359 as integer! :f_ctx357~b ctx357 
-    word/set-in ctx357 0 
-    stack/unwind ------------| "b: function [x y] [x + y]" 
-    stack/revert 
-    stack/mark-native ~set 
-    word/push ~a 
-    object/init-push ctx357 358 false 
+    word/push ~b 
+    stack/mark-native ~make 
+    word/get ~op! 
+    _function/push get-root 1 get-root 2 ctx362 as integer! :f_<anon361> null 
+    actions/make* 
+    stack/unwind 
     word/set 
     stack/unwind 
-    stack/reset ------------| "a: context [b: function [x y] [x + y]]" 
+    stack/reset ------------| "b: make op! function [x y] [x + y]" 
     stack/mark-func ~probe exec/ctx56 
-    stack/mark-func ~b exec/ctx359 
+    stack/mark-native ~b 
     integer/push 4 
     integer/push 5 
-    f_ctx357~b ctx357 
+    f_<anon361> 
     stack/unwind 
     f_probe 
-    stack/unwind ------------| "probe a/b 4 5" #user-code
+    stack/unwind ------------| "probe 4 b 5" #user-code
 ]
-...compilation time : 36 ms
+...compilation time : 25 ms
 
 Target: Linux 
 
 Compiling to native code...
-*** Compilation Error: unknown path root variable: red/object/path-parent 
-*** in file: %/home/nathan/repos/red/opTest.red 
-*** at line: 332 
-*** near: [
-    set-path* eval-path _context/get ~system as cell! ~script as
-]
+Script: "Red/System ELF format emitter" (none)
+...compilation time : 964 ms
+...linking time     : 122 ms
+...output file size : 104572 bytes
+...output file      : /home/nathan/repos/nd9600/myred/opTest 
+
+

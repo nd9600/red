@@ -4432,14 +4432,14 @@ red: context [
 			exit
 		]
 		while [not tail? pc][
-            print ""
-            print "####################"
-            print "looping over pc"
-            ?? pc
+            ;print ""
+            ;print "####################"
+            ;print "looping over pc"
+            ;?? pc
 			expr: pc
-            ?? expr
+            ;?? expr
 			either no-root [comp-expression][comp-expression/root]
-            ?? expr
+            ;?? expr
             print " "
 			; offset? x y returns how far y is infront of x
 			if all [verbose > 3 positive? size: offset? expr pc][probe copy/part expr size]
@@ -4583,7 +4583,7 @@ red: context [
 		comp-block
 		booting?: no
 
-        ?? code
+        ;?? code
 		
 		mods: tail output
 		append output [#user-code]
