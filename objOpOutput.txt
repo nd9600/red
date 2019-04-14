@@ -18,10 +18,36 @@ Script: "Encap virtual filesystem" (21-Sep-2009)
 
 -=== Red Compiler 0.6.4 ===- 
 
-Compiling /home/nathan/repos/nd9600/myred/objOpTest.red ...
-...using libRedRT built on 10-Apr-2019/10:23:40+1:00
+Compiling /home/nathan/repos/myred/objOpTest.red ...
+...using libRedRT built on 14-Apr-2019/21:21:54+1:00
 in comp-expression
 pc in check-infix-operators:
+in comp-path
+[
+    system/script/args: #system [
+        #either type = 'exe [stack/push get-cmdline-args] [none/push]
+    ] extract-boot-args
+]
+system/script/args:
+path: system/script/args:
+value: system
+path: script/args:
+value: script
+path: args:
+value: args
+calling obj-func-path? with
+system/script/args:
+path: system/script/args
+fpath: objects/system/script
+found?: make object! [
+    title: none
+    header: none
+    parent: none
+    path: none
+    args: none
+]
+fpath: objects/system/script
+base: objects
 in comp-expression
 pc in check-infix-operators:
  
@@ -52,26 +78,22 @@ a/b
  
 true
 true
-[op! 2 [x y] none]
-specs: [op! 2 [x y] none]
-true
-true
-######################################################################
-POS IS:
-[a/b 5]
-a/b
- 
-true
-true
-[op! 2 [x y] none]
-specs: [op! 2 [x y] none]
-true
-true
-[5]
-a/b
-*** Red Compiler Internal Error: Script Error : emit-open-frame expected name argument of type: word 
-*** Where: check-infix-operators 
-*** Near:  [emit-open-frame op 
-pos: skip pos
-] 
-
+path: a/b
+fpath: objects/a
+found?: make object! [
+    b: none
+]
+fpath: objects/a
+base: objects
+[make object! [
+        b: none
+    ] objects/a objects]
+fun: objects/a/b
+[none]
+obj: [make object! [
+        b: none
+    ] ctx361 362 none none]
+origin: none
+name: ctx361
+symbol: ctx361~b
+none

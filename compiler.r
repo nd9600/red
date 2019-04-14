@@ -943,7 +943,9 @@ red: context [
         ; 'base is the symbol for the start of the path!, like ctx361
 		base: get-obj-base-word path/1
 
+        ?? path
 		do search									;-- check if path is an absolute object path
+        ?? fpath
 		if all [not found? 1 < length? obj-stack][
 			base: obj-stack
 			do search								;-- check if path is a relative object path			
@@ -954,6 +956,9 @@ red: context [
 				return none							;-- not an object access path
 			]
 		]
+        ?? found?
+        ?? fpath
+        ?? base
 		reduce [found? fpath base]
 	]
 	
@@ -1107,11 +1112,36 @@ red: context [
             probe any [word? pos/1 path? pos/1]
             probe specs: select functions 
                 either (path? pos/1) [
-                    probe pos
-                    probe pos/1
-                    probe do pos/1
+                    path: to path! pos/1
+                    forall path [
+                        value: path/1
+                        add-symbol value
+                    ]
+                    set [found? fpath base] search-obj to path! pos/1
+                    probe reduce [found? fpath base]
+                    
+                    fun: append copy fpath either base = obj-stack [ ;-- extract function access path without refinements
+                        pick path 1 + (length? fpath) - (length? obj-stack)
+                    ][
+                        pick path length? fpath
+                    ]
+                    ?? fun
+                    probe reduce [do fun]
+                    remove fpath
+
+                    obj: 	find objects found?
+                    origin: find-proto obj last fun
+                    name:	either origin [select objects origin][obj/2] ; the symbol of the containing object (e.g. 'a), like ctx361
+                    symbol: decorate-obj-member first find/tail fun fpath name ; the symbol of the full path, like ctx361~b
+
+                    ?? obj
+                    ?? origin
+                    ?? name
+                    ?? symbol
+                    probe find functions symbol ; this should be an op!, but it's 'none instead
+
                     quit
-                    back tail pos/1
+                    
                     ] [
                         pos/1
                     ]
@@ -3312,6 +3342,7 @@ red: context [
 						]
 					]
                     ; adds 'a and 'b as symbols if it needs to
+                    ?? value
 					add-symbol value					;-- ensure the word is defined in global context
 				]
 				get-word! [
@@ -3328,6 +3359,8 @@ red: context [
 			]
 		]
 		self?: path/1 = 'self
+        
+        print "calling obj-func-path? with" probe path
 
 		if all [
 			not any [set? dynamic? find path integer!]

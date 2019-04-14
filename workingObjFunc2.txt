@@ -30,8 +30,24 @@ in comp-path
 ]
 system/script/args:
 path: system/script/args:
+value: system
 path: script/args:
+value: script
 path: args:
+value: args
+calling obj-func-path? with
+system/script/args:
+path: system/script/args
+fpath: objects/system/script
+found?: make object! [
+    title: none
+    header: none
+    parent: none
+    path: none
+    args: none
+]
+fpath: objects/system/script
+base: objects
 in comp-expression
 pc in check-infix-operators:
  
@@ -53,7 +69,18 @@ in comp-path
 [a/b 4 5]
 a/b
 path: a/b
+value: a
 path: b
+value: b
+calling obj-func-path? with
+a/b
+path: a/b
+fpath: objects/a
+found?: make object! [
+    b: function!
+]
+fpath: objects/a
+base: objects
 fun: objects/a/b
 fpath: objects/a
 fpath: a
@@ -70,6 +97,7 @@ get?: none
 fpath: b
 symbol: ctx361~b
 ctx: ctx361
+"SHOULD PROBABLY CHANGE HERE"
 in comp-expression
 pc in check-infix-operators:
 in comp-expression
@@ -148,14 +176,14 @@ in comp-expression
     f_probe 
     stack/unwind ------------| "probe a/b 4 5" #user-code
 ]
-...compilation time : 31 ms
+...compilation time : 33 ms
 
 Target: Linux 
 
 Compiling to native code...
 Script: "Red/System ELF format emitter" (none)
-...compilation time : 1741 ms
-...linking time     : 249 ms
+...compilation time : 1749 ms
+...linking time     : 253 ms
 ...output file size : 104944 bytes
 ...output file      : /home/nathan/repos/myred/workingObjFuncTest 
 
