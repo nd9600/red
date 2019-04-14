@@ -827,6 +827,8 @@ red: context [
 				alias: decorate-series-var name
 				repend aliases [name alias]
 			]
+
+            ; 'sym is 'name with a ~ in front
 			sym: decorate-symbol name
 			id: 1 + ((length? symbols) / 2)
 			repend symbols [name reduce [sym id]]
@@ -938,7 +940,9 @@ red: context [
 			]
 		]
 
+        ; 'base is the symbol for the start of the path!, like ctx361
 		base: get-obj-base-word path/1
+
 		do search									;-- check if path is an absolute object path
 		if all [not found? 1 < length? obj-stack][
 			base: obj-stack
@@ -996,6 +1000,10 @@ red: context [
 			fpath: head clear next copy path
 		][
 			set [found? fpath base] search-obj to path! path
+            ; [found? fpath base] =
+            ; [make object! [
+            ;    b: function!
+            ;] objects/a objects]
 			unless found? [
 				if all [
 					not empty? ctx-stack
@@ -1008,19 +1016,30 @@ red: context [
 				unless found? [return none]
 			]
 
+            ; 'fun is the full path to the function, like objects/a/b
 			fun: append copy fpath either base = obj-stack [ ;-- extract function access path without refinements
 				pick path 1 + (length? fpath) - (length? obj-stack)
 			][
 				pick path length? fpath
 			]
+            ?? fun
+            ?? fpath
 			unless function! = attempt [do fun][return none] ;-- not a function call
 			remove fpath								;-- remove 'objects prefix
 		]
+        ; fpath is now 'a
+        ?? fpath
 
 		obj: 	find objects found?
 		origin: find-proto obj last fun
-		name:	either origin [select objects origin][obj/2]
-		symbol: decorate-obj-member first find/tail fun fpath name
+		name:	either origin [select objects origin][obj/2] ; the symbol of the containing object (e.g. 'a), like ctx361
+		symbol: decorate-obj-member first find/tail fun fpath name ; the symbol of the full path, like ctx361~b
+
+        ?? obj
+        ?? origin
+        ?? name
+        ?? symbol
+        probe find functions symbol
 
 		either find functions symbol [
 			fpath: next find path last fpath			;-- point to function name
@@ -1086,7 +1105,16 @@ red: context [
             print " "
             probe not tail? pos
             probe any [word? pos/1 path? pos/1]
-            probe specs: select functions either (path? pos/1) [back tail pos/1] [pos/1]
+            probe specs: select functions 
+                either (path? pos/1) [
+                    probe pos
+                    probe pos/1
+                    probe do pos/1
+                    quit
+                    back tail pos/1
+                    ] [
+                        pos/1
+                    ]
             ?? specs
             probe 'op! = specs/1
 			probe not all [									;-- check if a literal argument is not expected
@@ -3237,15 +3265,29 @@ red: context [
 			pc: either set? [after][next pc]
 			exit
 		]
+
+        print "in comp-path"
+        probe pc
+        probe pc/1
 		
+        ; pc is [a/b 4 5], so pc/1/1 is 'a
+        ; dispatch-ctx-keywords checks if the first bit of the path! is an object, and if it is, it calls "comp-context/with a" - if that returns a block!, it adds the block! to the output
+        ;       if the first bit of the path! is one of the right types (not a word!), then it returns true
+        ; if path isn't a set-path! and is one of the right types, it returns true
+        ; 'a is a word!, not an object, so it returns false
+
 		if all [not set? defer: dispatch-ctx-keywords/with pc/1/1 path/1][
 			if block? defer [emit defer]
 			exit
 		]
 		
 		forall path [									;-- preprocessing path
+            ?? path
 			switch/default type?/word value: path/1 [
+
+                ; adds all parts of the path! to the symbols table if they're not there already
 				word! [
+                    ; if it's not a set-word!, and we haven't seen a get-word! yet, and some other things, do stuff
 					if all [
 						not set? not get?
 						all [
@@ -3254,6 +3296,7 @@ red: context [
 							name: alter
 						]
 					][
+                        probe "in all"
 						if head? path [
 							if alter: select-ssa name [entry: find functions alter]
 							pc: next pc
@@ -3268,6 +3311,7 @@ red: context [
 							exit
 						]
 					]
+                    ; adds 'a and 'b as symbols if it needs to
 					add-symbol value					;-- ensure the word is defined in global context
 				]
 				get-word! [
@@ -3287,11 +3331,20 @@ red: context [
 
 		if all [
 			not any [set? dynamic? find path integer!]
-			set [fpath symbol ctx] obj-func-path? path
+			set [fpath symbol ctx] probe obj-func-path? path
 		][
+            ; if path is 'b, [fpath symbol ctx] is [b ctx361~b ctx361]
+            ; if it's not [a set-word!, in the interpreter, or the path! has an integer in it], and 
+            print "hello"
+            ?? get?
+            ?? fpath
+            ?? symbol
+            ?? ctx
 			either get? [
 				check-new-func-name path symbol ctx
 			][
+                ;b1
+                probe "SHOULD PROBABLY CHANGE HERE"
 				pc: next pc
 				comp-call/with fpath functions/:symbol symbol ctx
 				exit
@@ -4601,7 +4654,6 @@ red: context [
 
         print "##################################################################compiling user code"
 		comp-block
-        ?? functions
         probe "output2d:" ?? output
 		append output [#user-code]
 		
