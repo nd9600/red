@@ -1422,6 +1422,8 @@ red: context [
 	
 	add-function: func [name [word!] spec [block!] /type kind [word!] /local refs arity pos][
 		set [refs arity] make-refs-table spec
+        print "APPENDING FUNCTION3"
+        probe reduce [name reduce [any [kind 'function!] arity spec refs]]
 		repend functions [name reduce [any [kind 'function!] arity spec refs]]
 	]
 	
@@ -1467,6 +1469,8 @@ red: context [
 		]
 		if nat? [prepare-typesets name spec]
 		set [refs arity] make-refs-table spec
+        print "APPENDING FUNCTION4"
+        probe reduce [name reduce [type arity spec refs]]
 		repend functions [name reduce [type arity spec refs]]
 		defer
 	]
@@ -2909,6 +2913,8 @@ red: context [
 		]
 		
 		octx: either 1 < length? obj-stack [select objects do obj-stack]['null]
+        print "APPENDING FUNCTION6"
+        probe octx
 		if all [global? octx <> 'null][append last functions octx]	;-- add origin obj ctx to function's entry
 		
 		defer: compose [

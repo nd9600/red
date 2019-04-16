@@ -82,16 +82,8 @@ in comp-expression
 pc in check-infix-operators:
 in comp-expression
 pc in check-infix-operators:
-in comp-expression
-pc in check-infix-operators:
-APPENDING FUNCTION4
-[b [op! 2 [x y] none]]
-in comp-expression
-pc in check-infix-operators:
-in comp-expression
-pc in check-infix-operators:
 APPENDING FUNCTION3
-[<anon363> [function! 2 [x y] none]]
+[ctx361~b [function! 2 [x y] none]]
 APPENDING FUNCTION6
 ctx361
  
@@ -123,19 +115,15 @@ output: [
     stack/unwind ------------| "extract-boot-args" #user-code ------------| "a: context [b]" 
     stack/mark-native ~body 
     stack/mark-native ~set 
-    stack/mark-native ~make 
-    word/get ~op! 
-    _function/push get-root 2 get-root 3 ctx364 as integer! :f_<anon363> ctx361 
-    actions/make* 
-    stack/unwind 
+    _function/push get-root 2 get-root 3 ctx363 as integer! :f_ctx361~b ctx361 
     word/set-in ctx361 0 
-    stack/unwind ------------| "b: make op! function [x y] [x + y]" 
+    stack/unwind ------------| "b: function [x y] [x + y]" 
     stack/revert 
     stack/mark-native ~set 
     word/push ~a 
     object/init-push ctx361 362 false 
     word/set 
-    stack/unwind ------------| "a: context [b: make op! function [x y] [x + y]]"
+    stack/unwind ------------| "a: context [b: function [x y] [x + y]]"
 ]
 in comp-expression
 pc in check-infix-operators:
@@ -145,29 +133,25 @@ in comp-expression
 [------------| "a: context [b]" 
     stack/mark-native ~body 
     stack/mark-native ~set 
-    stack/mark-native ~make 
-    word/get ~op! 
-    _function/push get-root 2 get-root 3 ctx364 as integer! :f_<anon363> ctx361 
-    actions/make* 
-    stack/unwind 
+    _function/push get-root 2 get-root 3 ctx363 as integer! :f_ctx361~b ctx361 
     word/set-in ctx361 0 
-    stack/unwind ------------| "b: make op! function [x y] [x + y]" 
+    stack/unwind ------------| "b: function [x y] [x + y]" 
     stack/revert 
     stack/mark-native ~set 
     word/push ~a 
     object/init-push ctx361 362 false 
     word/set 
-    stack/unwind ------------| "a: context [b: make op! function [x y] [x + y]]" #user-code
+    stack/unwind ------------| "a: context [b: function [x y] [x + y]]" #user-code
 ]
-...compilation time : 22 ms
+...compilation time : 19 ms
 
 Target: Linux 
 
 Compiling to native code...
 Script: "Red/System ELF format emitter" (none)
-...compilation time : 947 ms
-...linking time     : 118 ms
-...output file size : 104784 bytes
+...compilation time : 998 ms
+...linking time     : 149 ms
+...output file size : 104572 bytes
 ...output file      : /home/nathan/repos/nd9600/myred/objOpTest 
 
 
