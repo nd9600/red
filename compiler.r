@@ -3354,39 +3354,22 @@ red: context [
 			not any [set? dynamic? find path integer!]
 			set [fpath symbol ctx] probe obj-func-path? path
 		][
-            ; if path is 'b, [fpath symbol ctx] is [b ctx361~b ctx361]
-            ; if it's not [a set-word!, in the interpreter, or the path! has an integer in it], and [fpath symbol ctx] are set, then do this
-            ; 'fpath is the full path to the object, I think, so objects/a
-            print "hello1"
-            ?? get?
-            ?? fpath
-            ?? symbol
-            ?? ctx
 			either get? [
 				check-new-func-name path symbol ctx
 			][
                 probe "SHOULD PROBABLY CHANGE HERE"
-                ; ?? functions
-                ; ?? objects
-                ; ?? symbols
-                ; ?? sym-table
-                ; ?? contexts
 				pc: next pc
 				comp-call/with fpath functions/:symbol symbol ctx
 				exit
 			]
 		]
 
-        print "after calling calling obj-func-path?"
-		
 		obj?: all [
 			not any [dynamic? find path integer!]
 			set [obj fpath] object-access? path
 			obj
 		]
 
-        ?? obj?
-		
 		if set? [
 			pc: next pc
 			either obj? [									;-- fetch assigned value earlier
@@ -3399,10 +3382,6 @@ red: context [
 			if block? defer [emit defer]
 		]
 
-        print "after if set?"
-        ?? path
-        ?? fpath
-
 		if obj-field?: all [
 			obj? 
 			word? last path								;-- not allow get-words to pass (#1141)
@@ -3410,35 +3389,15 @@ red: context [
 		][
 			ctx: second obj: find objects obj
 
-            ; finds the index of 'b in the object 'a (it's 0)
 			unless index: get-word-index/with last path ctx [
 				throw-error ["word" last path "not defined in" path]
 			]
-
-            ?? ctx
-            ?? index
-
-            if (ctx == 'ctx361) [
-                print "hello"
-                ?? functions
-                ?? objects
-                ?? symbols
-                ?? sym-table
-                ?? contexts					;-- storage for statically compiled contexts
-                print "contexts path"
-                probe get pick contexts/ctx361 (index + 1)
-                ?? shadow-funcs				;-- shadow functions contexts [symbol object! ctx...]
-                ?? functions
-            ]
 			
 			true-blk: compose/deep pick [
 				[[word/set-in-ctx (ctx) (index)]]
 				[[word/get-local  (ctx) (index)]]
 			] set?
 
-            ; [[word/get-local ctx361 0]]
-            ?? true-blk
-			
 			mark: none
 			either self? [
 				if all [not empty? locals-stack	container-obj?][
@@ -3447,8 +3406,6 @@ red: context [
 				mark: tail output
 				emit first true-blk
 			][
-                print "emitting"
-                ; either object/unchanged? ~a 362 [word/get-local ctx361 0]
 				emit compose [
 					either (emit-deep-check path fpath) (true-blk)
 				]
@@ -3568,10 +3525,6 @@ red: context [
 			item name compact? refs ref? cnt pos ctx mark list offset emit-no-ref
 			args option stop? original
 	][
-
-        ; call  spec              swmbol ctx-name
-        ; fpath functions/:symbol symbol ctx
-
 		either all [not thru spec/1 = 'intrinsic!][
 			switch any [all [path? call call/1] call] keywords
 		][
@@ -3802,9 +3755,6 @@ red: context [
 		]
 		
 		push-call 'set
-        print "going to call dispatch-ctx-keywords with"
-        probe :original
-        probe pc/1
 		case [
 			all [
 				pc/1 = 'make
@@ -3826,8 +3776,6 @@ red: context [
 				defer: dispatch-ctx-keywords/with original pc/1
 			][]
 			'else [
-                print "in else"
-                
 				if start [emit start]
 				unless any [obj-bound? no-check?][check-redefined name original]
 				check-cloned-function name
@@ -4447,10 +4395,6 @@ red: context [
 			throw-error "missing argument"
 		]
 
-        print "comp-expression switch"
-        probe pc/1
-        probe type?/word pc/1
-		
 		switch/default type?/word pc/1 [
 			issue!		[
 				either all [
@@ -4562,16 +4506,8 @@ red: context [
 			exit
 		]
 		while [not tail? pc][
-            ;print ""
-            ;print "####################"
-            ;print "looping over pc"
-            ;?? pc
 			expr: pc
-            ;?? expr
 			either no-root [comp-expression][comp-expression/root]
-            ;?? expr
-            print " "
-			; offset? x y returns how far y is infront of x
 			if all [verbose > 3 positive? size: offset? expr pc][probe copy/part expr size]
 			if verbose > 0 [emit-src-comment expr]
 			
@@ -4713,8 +4649,6 @@ red: context [
 		comp-block
 		booting?: no
 
-        ;?? code
-		
 		mods: tail output
 		append output [#user-code]
 		foreach module needed [
