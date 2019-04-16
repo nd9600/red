@@ -1078,28 +1078,25 @@ red: context [
 		no
 	]
 	
-	infix?: func [pos [block! paren!] /local function-to-search-for specs left][
-        function-to-search-for: either (path? pos/1) [ ; if an op! is being made inside an object!, it needs the object's ctx in-front, like ctx361~f (#3482)
-            path: to path! pos/1
-            forall path [
-                value: path/1
-                add-symbol value
-            ]
-            set [found? fpath base] search-obj to path! pos/1
-            
-            fun: append copy fpath either base = obj-stack [ ;-- extract function access path without refinements
-                pick path 1 + (length? fpath) - (length? obj-stack)
+	infix?: func [pos [block! paren!] /local function-to-search-for path found? fpath base function-name-without-refinements function-name  obj object-name function-name-with-context specs left][
+        function-to-search-for: either (path? pos/1) [ ; if an op! is being made inside an object!, it needs the object's context in-front, like ctx361~f (#3482)
+            set [found? fpath base] search-obj pos/1
+
+            function-name-without-refinements: append copy fpath either base = obj-stack [ ;-- extract function access path without refinements
+                pick pos/1 1 + (length? fpath) - (length? obj-stack)
             ][
-                pick path length? fpath
+                pick pos/1 length? fpath
             ]
-            reduce [do fun]
+            ;reduce [do function-name-without-refinements]
             remove fpath
 
+            function-name: first find/tail function-name-without-refinements fpath
+
             obj: 	find objects found?
-            origin: find-proto obj last fun
-            name:	either origin [select objects origin][obj/2]
-            symbol: decorate-obj-member first find/tail fun fpath name
-            symbol
+            ; origin: find-proto obj last function-name-without-refinements
+            object-name: obj/2
+            function-name-with-context: decorate-obj-member function-name object-name
+            function-name-with-context
         ] [
             pos/1
         ]

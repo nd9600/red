@@ -28,9 +28,6 @@ pc in check-infix-operators:
     ] extract-boot-args
 ]
 none
-comp-expression switch
-system/script/args:
-set-path!
 in comp-path
 [
     system/script/args: #system [
@@ -46,98 +43,33 @@ path: args:
 value: args
 calling obj-func-path? with
 system/script/args:
-after calling calling obj-func-path?
-path: system/script/args
-fpath: objects/system/script
-found?: make object! [
-    title: none
-    header: none
-    parent: none
-    path: none
-    args: none
-]
-fpath: objects/system/script
-base: objects
-obj?: make object! [
-    title: none
-    header: none
-    parent: none
-    path: none
-    args: none
-]
 in comp-expression
 pc in check-infix-operators:
 [#system [
         #either type = 'exe [stack/push get-cmdline-args] [none/push]
     ] extract-boot-args]
 none
-comp-expression switch
-#system
-issue!
-after if set?
-path: system/script/args:
-fpath: objects/system/script
-ctx: ctx255
-index: 4
-true-blk: [[word/set-in-ctx ctx255 4]]
-emitting
-in get-prefix-func
-obj-stack: objects
-end obj-stack
-path!
-returning eval-set-path
- 
 in comp-expression
 pc in check-infix-operators:
 [extract-boot-args]
 none
-comp-expression switch
-extract-boot-args
-word!
-in get-prefix-func
-obj-stack: objects
-end obj-stack
-path!
-returning extract-boot-args
-in get-prefix-func
-obj-stack: objects
-end obj-stack
-path!
-returning extract-boot-args
- 
 ##################################################################compiling user code
 in comp-expression
 pc in check-infix-operators:
 [
     a: context [b: make op! function [x y] [x + y]] 
-    probe a/b 5
+    probe 4 a/b 5
 ]
 none
-comp-expression switch
-a:
-set-word!
-going to call dispatch-ctx-keywords with
-a:
-context
 in comp-expression
 pc in check-infix-operators:
 [b: make op! function [x y] [x + y]]
 none
-comp-expression switch
-b:
-set-word!
-going to call dispatch-ctx-keywords with
-b:
-make
-in else
 in comp-substitute-expression
 in comp-expression
 pc in check-infix-operators:
 [make op! function [x y] [x + y]]
 none
-comp-expression switch
-make
-word!
 FETCH-FUNCTIONS2
 [op! function [x y] [x + y]]
 [b: make op! function [x y] [x + y]]
@@ -145,84 +77,34 @@ in fetch-functions
 pc: [op! function [x y] [x + y]]
 pos: [b: make op! function [x y] [x + y]]
 in either's true block
-in get-prefix-func
-obj-stack: objects/
-a
-end obj-stack
-path!
-in obj-stack block
-prefix-func/with b
-objects/
-a
-path: ctx361
-word: b
 src-name: ctx361~b
 name: ctx361~b
 name: ctx361~b
 spec: [x y]
 APPENDING FUNCTION4
 [ctx361~b [op! 2 [x y] none]]
-in get-prefix-func
-obj-stack: objects/
-a
-end obj-stack
-path!
-in obj-stack block
-returning make
 in comp-expression
 pc in check-infix-operators:
 [op! function [x y] [x + y]]
 none
-comp-expression switch
-op!
-word!
-in get-prefix-func
-obj-stack: objects/
-a
-end obj-stack
-path!
-in obj-stack block
-returning op!
 in comp-expression
 pc in check-infix-operators:
 [function [x y] [x + y]]
 none
-comp-expression switch
-function
-word!
 APPENDING FUNCTION3
 [<anon363> [function! 2 [x y] none]]
 APPENDING FUNCTION6
 ctx361
- 
- 
 in comp-expression
 pc in check-infix-operators:
 [
-    probe a/b 5
+    probe 4 a/b 5
 ]
-path: a/b
-fpath: objects/a
-found?: make object! [
-    b: none
-]
-fpath: objects/a
-base: objects
+none
+in comp-expression
+pc in check-infix-operators:
+[4 a/b 5]
 true
-path: a/b
-fpath: objects/a
-found?: make object! [
-    b: none
-]
-fpath: objects/a
-base: objects
-path: a/b
-fpath: objects/a
-found?: make object! [
-    b: none
-]
-fpath: objects/a
-base: objects
 [5]
 a/b
 *** Red Compiler Internal Error: Script Error : emit-open-frame expected name argument of type: word 
