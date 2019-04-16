@@ -56,6 +56,8 @@ obj?: make object! [
     path: none
     args: none
 ]
+dispatch-ctx-keywords
+#system
 in comp-expression
 pc in check-infix-operators:
 after if set?
@@ -76,12 +78,19 @@ words: [_context/get ~system as cell! ~script as cell! ~args]
  
 in comp-expression
 pc in check-infix-operators:
+dispatch-ctx-keywords
+extract-boot-args
  
 ##################################################################compiling user code
 in comp-expression
 pc in check-infix-operators:
+dispatch-ctx-keywords
+context
 in comp-expression
 pc in check-infix-operators:
+dispatch-ctx-keywords
+function
+add-function in comp-func
 APPENDING FUNCTION3
 [ctx361~b [function! 2 [x y] none]]
 APPENDING FUNCTION6
@@ -128,7 +137,11 @@ output: [
 in comp-expression
 pc in check-infix-operators:
 in comp-expression
+dispatch-ctx-keywords
+x
 in comp-expression
+dispatch-ctx-keywords
+y
  
 [------------| "a: context [b]" 
     stack/mark-native ~body 
@@ -143,14 +156,14 @@ in comp-expression
     word/set 
     stack/unwind ------------| "a: context [b: function [x y] [x + y]]" #user-code
 ]
-...compilation time : 19 ms
+...compilation time : 21 ms
 
 Target: Linux 
 
 Compiling to native code...
 Script: "Red/System ELF format emitter" (none)
-...compilation time : 998 ms
-...linking time     : 149 ms
+...compilation time : 1033 ms
+...linking time     : 153 ms
 ...output file size : 104572 bytes
 ...output file      : /home/nathan/repos/nd9600/myred/objOpTest 
 

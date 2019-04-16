@@ -154,6 +154,9 @@ red: context [
 	
 	dispatch-ctx-keywords: func [original [any-word! none!] /with alt-value][
 		if path? alt-value [alt-value: alt-value/1]
+
+        print "dispatch-ctx-keywords"
+        probe any [alt-value pc/1]
 		
 		switch/default any [alt-value pc/1][
 			func	  [comp-func]
@@ -2881,6 +2884,7 @@ red: context [
 			has		[spec: head insert copy spec /local]
 		]
 		set [symbols locals-nb] check-spec spec
+        print "add-function in comp-func"
 		add-function name spec
 		if pos: find spec return-def [register-user-type/store name pos/2]
 
@@ -3910,6 +3914,9 @@ red: context [
 				any-function? pc/1
 			][
 				if pc/1 = 'routine! [throw-error "MAKE routine! is not supported"]
+                print "FETCH-FUNCTIONS2"
+                probe pc
+                probe skip pc -2
 				defer: fetch-functions skip pc -2		;-- extract functions definitions
 				pc: back pc
 				comp-word/final
