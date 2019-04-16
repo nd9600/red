@@ -152,19 +152,8 @@ red: context [
 		quit-on-error
 	]
 	
-	dispatch-ctx-keywords: func [
-        "compiles functions or objects that are the values to keys in objects, I think"
-        original [any-word! none!] /with alt-value][
+	dispatch-ctx-keywords: func [original [any-word! none!] /with alt-value][
 		if path? alt-value [alt-value: alt-value/1]
-
-        ; with a: context [b: make op! function [x y][x + y]]
-        ; alt-value is make
-        ;print "dispatch-ctx-keywords"
-
-        ; with a: context [b: function [x y][x + y]]
-        ; alt-value is function, so they go into different branches
-        ;?? alt-value
-        ;?? pc
 		
 		switch/default any [alt-value pc/1][
 			func	  [comp-func]
@@ -773,8 +762,6 @@ red: context [
 	prefix-func: func [word [word!] /with path][
 		if 1 < length? obj-stack [
 			path: any [obj-func-call? word next any [path obj-stack]]
-            ?? path
-            ?? word
 			word: decorate-obj-member word path
 		]
 		word
@@ -841,7 +828,6 @@ red: context [
 				repend aliases [name alias]
 			]
 
-            ; 'sym is 'name with a ~ in front
 			sym: decorate-symbol name
 			id: 1 + ((length? symbols) / 2)
 			repend symbols [name reduce [sym id]]
@@ -953,12 +939,9 @@ red: context [
 			]
 		]
 
-        ; 'base is the symbol for the start of the path!, like ctx361
 		base: get-obj-base-word path/1
 
-        ?? path
 		do search									;-- check if path is an absolute object path
-        ?? fpath
 		if all [not found? 1 < length? obj-stack][
 			base: obj-stack
 			do search								;-- check if path is a relative object path			
@@ -969,9 +952,6 @@ red: context [
 				return none							;-- not an object access path
 			]
 		]
-        ?? found?
-        ?? fpath
-        ?? base
 		reduce [found? fpath base]
 	]
 	
@@ -1018,10 +998,6 @@ red: context [
 			fpath: head clear next copy path
 		][
 			set [found? fpath base] search-obj to path! path
-            ; [found? fpath base] =
-            ; [make object! [
-            ;    b: function!
-            ;] objects/a objects]
 			unless found? [
 				if all [
 					not empty? ctx-stack
@@ -1034,28 +1010,20 @@ red: context [
 				unless found? [return none]
 			]
 
-            ; 'fun is the full path to the function, like objects/a/b
 			fun: append copy fpath either base = obj-stack [ ;-- extract function access path without refinements
 				pick path 1 + (length? fpath) - (length? obj-stack)
 			][
 				pick path length? fpath
 			]
-			unless function! = attempt [do fun] [return none] ;-- not a function call
+			unless function! = attempt [do fun][return none] ;-- not a function call
 			remove fpath								;-- remove 'objects prefix
 		]
 
 		obj: 	find objects found?
 		origin: find-proto obj last fun
-		name:	either origin [select objects origin][obj/2] ; the symbol of the containing object (e.g. 'a), like ctx361
-		symbol: decorate-obj-member first find/tail fun fpath name ; the symbol of the full path, like ctx361~b
+		name:	either origin [select objects origin][obj/2]
+		symbol: decorate-obj-member first find/tail fun fpath name
         
-
-        ?? obj
-        ?? origin
-        ?? name
-        ?? symbol
-        probe find functions symbol
-
 		either find functions symbol [
 			fpath: next find path last fpath			;-- point to function name
 			reduce [
@@ -1385,19 +1353,13 @@ red: context [
         /is-op "used when the function to prefix is an op!"
         /local path word ctx
     ] [
-        print "in get-prefix-func"
-        ?? obj-stack
-        print "end obj-stack"
-        probe type? obj-stack
 		if 1 < length? obj-stack [
 			path: copy obj-stack
-            print "in obj-stack block"
 			while [1 < length? path][
 				if all [
                     word: in do path name
                     any [is-op function! = get word]
                 ] [
-					prin "prefix-func/with " probe name probe path
 					return prefix-func/with name path
 				]
 				remove back tail path
@@ -1407,10 +1369,8 @@ red: context [
 			container-obj?
 			ctx: obj-func-call? name
 		][
-            prin "decorating with " probe ctx
 			return decorate-obj-member name ctx
 		]
-        prin "returning " probe name
 		name
 	]
 	
@@ -1476,16 +1436,10 @@ red: context [
         ?? spec
 		unless spec [
 			spec: either pos/3 = 'op! [
-                print "making spec for op!"
-                ?? proto
 				either entry: find functions proto [
 					if 1 < length? obj-stack [
-						contextName: select objects do obj-stack	;-- append context name if method
-                        ?? contextName
-                        append entry/2 contextName
+						append entry/2 select objects do obj-stack	;-- append context name if method
 					]
-                    print "entry is" probe entry
-                    print "spec is" probe entry
 					entry/2/3
 				][
 					throw-error ["Cannot MAKE OP! from unknown function:" mold pos/4]
