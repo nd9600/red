@@ -155,7 +155,13 @@ red: context [
 	dispatch-ctx-keywords: func [original [any-word! none!] /with alt-value][
 		if path? alt-value [alt-value: alt-value/1]
 
+        ; with a: context [b: make op! function [x y][x + y]]
+        ; alt-value is make
         print "dispatch-ctx-keywords"
+
+        ; with a: context [b: function [x y][x + y]]
+        ; alt-value is function, so they go into different branches
+        probe alt-value
         probe any [alt-value pc/1]
 		
 		switch/default any [alt-value pc/1][
@@ -3830,6 +3836,9 @@ red: context [
 		]
 		
 		push-call 'set
+        print "going to call dispatch-ctx-keywords with"
+        probe :original
+        probe pc/1
 		case [
 			all [
 				pc/1 = 'make
