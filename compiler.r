@@ -1078,7 +1078,7 @@ red: context [
 		no
 	]
 	
-	infix?: func [pos [block! paren!] /local specs left][
+	infix?: func [pos [block! paren!] /local function-to-search-for specs left][
         function-to-search-for: either (path? pos/1) [ ; if an op! is being made inside an object!, it needs the object's ctx in-front, like ctx361~f (#3482)
             path: to path! pos/1
             forall path [
