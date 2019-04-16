@@ -159,12 +159,12 @@ red: context [
 
         ; with a: context [b: make op! function [x y][x + y]]
         ; alt-value is make
-        print "dispatch-ctx-keywords"
+        ;print "dispatch-ctx-keywords"
 
         ; with a: context [b: function [x y][x + y]]
         ; alt-value is function, so they go into different branches
-        probe alt-value
-        probe any [alt-value pc/1]
+        ;?? alt-value
+        ;?? pc
 		
 		switch/default any [alt-value pc/1][
 			func	  [comp-func]
@@ -773,6 +773,8 @@ red: context [
 	prefix-func: func [word [word!] /with path][
 		if 1 < length? obj-stack [
 			path: any [obj-func-call? word next any [path obj-stack]]
+            ?? path
+            ?? word
 			word: decorate-obj-member word path
 		]
 		word
@@ -1052,6 +1054,7 @@ red: context [
 		origin: find-proto obj last fun
 		name:	either origin [select objects origin][obj/2] ; the symbol of the containing object (e.g. 'a), like ctx361
 		symbol: decorate-obj-member first find/tail fun fpath name ; the symbol of the full path, like ctx361~b
+        
 
         ?? obj
         ?? origin
@@ -1412,11 +1415,24 @@ red: context [
 		reduce [list arity]
 	]
 	
-	get-prefix-func: func [name [word!] /local path word ctx][
+	get-prefix-func: func [
+        name [word!] 
+        /is-op "used when the function to prefix is an op!"
+        /local path word ctx
+    ] [
+        print "in get-prefix-func"
+        ?? obj-stack
+        print "end obj-stack"
+        probe type? obj-stack
 		if 1 < length? obj-stack [
 			path: copy obj-stack
+            print "in obj-stack block"
 			while [1 < length? path][
-				if all [word: in do path name function! = get word][
+				if all [
+                    word: in do path name
+                    any [is-op function! = get word]
+                ] [
+					prin "prefix-func/with " probe name probe path
 					return prefix-func/with name path
 				]
 				remove back tail path
@@ -1426,8 +1442,10 @@ red: context [
 			container-obj?
 			ctx: obj-func-call? name
 		][
+            prin "decorating with " probe ctx
 			return decorate-obj-member name ctx
 		]
+        prin "returning " probe name
 		name
 	]
 	
@@ -1447,9 +1465,35 @@ red: context [
 			throw-error "Non-compilable function definition"
 		]
 		invalid-spec: [throw-error ["invalid argument function to make op!:" mold copy/part at pos 4 2]]
-		
-		name: to word! pos/1
+
+        print "in fetch-functions"
+        ?? pc
+        ?? pos
+        either all [(pc/-1 == 'make) (pc/1 == first [op!])] [ ; if e.g. the key-value pair is f: make op! function [x y] [x + y], we need to comiple it differently, so that it's added to 'functions (#3482)
+            print "in either's true block"
+            original: pos/1
+            src-name: to word! original
+            unless global?: all [lit-word? :original pc/-2 = 'set][
+                src-name: get-prefix-func/is-op src-name
+            ]
+            ?? src-name
+            name: check-func-name src-name
+            ?? name
+            add-symbol/with word: to word! clean-lf-flag name to word! clean-lf-flag original
+            unless any [
+                local-word? name
+                1 < length? obj-stack
+            ][
+                add-global word
+            ]
+            
+        ] [
+            print "in either's false block"
+            name: to word! pos/1
+        ]
 		if find functions name [exit]					;-- mainly intended for 'make (hardcoded)
+
+        ?? name
 
 		switch type: pos/3 [
 			native! [nat?: yes if find intrinsics name [type: 'intrinsic!]]
@@ -1464,12 +1508,19 @@ red: context [
 				]
 			]
 		]
+        ?? spec
 		unless spec [
 			spec: either pos/3 = 'op! [
+                print "making spec for op!"
+                ?? proto
 				either entry: find functions proto [
 					if 1 < length? obj-stack [
-						append entry/2 select objects do obj-stack	;-- append context name if method
+						contextName: select objects do obj-stack	;-- append context name if method
+                        ?? contextName
+                        append entry/2 contextName
 					]
+                    print "entry is" probe entry
+                    print "spec is" probe entry
 					entry/2/3
 				][
 					throw-error ["Cannot MAKE OP! from unknown function:" mold pos/4]
@@ -1522,20 +1573,16 @@ red: context [
 		while [not head? path: back path][
 			emit pick [eval-int-path eval-path] integer? path/1
 		]												;-- path should be at head again
-
-        print "in emit-path"
 		
 		words: clear []
 		blk: []
 		forall path [
-            ?? path
 			append words either integer? item: path/1 [item][
 				get?: to logic! any [head? path get-word? item]
-				probe get-path-word item clear blk get?
+				get-path-word item clear blk get?
 			]
 		]
 		emit words
-        ?? words
 		
 		new-line/all mark no
 		new-line pos yes
@@ -2855,6 +2902,7 @@ red: context [
 			return defer
 		]
 		original: pc/-1
+        ?? original
 		case [
 			set-path? original [
 				path: original
@@ -2869,10 +2917,15 @@ red: context [
 			]
 			find [set-word! lit-word!] type?/word :original [
 				src-name: to word! original
+                ?? src-name
+                ?? pc
+                probe lit-word? :original
+                probe pc/-2 = 'set
 				unless global?: all [lit-word? :original pc/-2 = 'set][
 					src-name: get-prefix-func src-name
 				]
 				name: check-func-name src-name
+                ?? src-name
 				add-symbol/with word: to word! clean-lf-flag name to word! clean-lf-flag original
 				unless any [
 					local-word? name
@@ -2883,6 +2936,8 @@ red: context [
 			]
 			'else [name: generate-anon-name]			;-- unassigned function case
 		]
+
+        ?? name
 		
 		pc: next pc
 		set [spec body] pc
@@ -3402,11 +3457,11 @@ red: context [
 				check-new-func-name path symbol ctx
 			][
                 probe "SHOULD PROBABLY CHANGE HERE"
-                ?? functions
-                ?? objects
-                ?? symbols
-                ?? sym-table
-                ?? contexts
+                ; ?? functions
+                ; ?? objects
+                ; ?? symbols
+                ; ?? sym-table
+                ; ?? contexts
 				pc: next pc
 				comp-call/with fpath functions/:symbol symbol ctx
 				exit
@@ -3859,13 +3914,15 @@ red: context [
 			all [
 				any [word? pc/1 path? pc/1]
 				do take-frame
-				probe defer: dispatch-ctx-keywords/with original pc/1
+				defer: dispatch-ctx-keywords/with original pc/1
 			][]
 			'else [
                 print "in else"
+                
 				if start [emit start]
 				unless any [obj-bound? no-check?][check-redefined name original]
 				check-cloned-function name
+
 				comp-substitute-expression				;-- fetch a value (2nd argument)
 			]
 		]
@@ -4765,7 +4822,9 @@ red: context [
 
         print "##################################################################compiling user code"
 		comp-block
-        probe "output2d:" ?? output
+        prin "functions: "
+        print mold skip tail functions -20
+        probe "output2d:" probe output
 		append output [#user-code]
 		
 		main: output

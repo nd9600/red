@@ -22,6 +22,15 @@ Compiling /home/nathan/repos/myred/opTest.red ...
 ...using libRedRT built on 14-Apr-2019/21:21:54+1:00
 in comp-expression
 pc in check-infix-operators:
+[
+    system/script/args: #system [
+        #either type = 'exe [stack/push get-cmdline-args] [none/push]
+    ] extract-boot-args
+]
+none
+comp-expression switch
+system/script/args:
+set-path!
 in comp-path
 [
     system/script/args: #system [
@@ -35,6 +44,11 @@ path: script/args:
 value: script
 path: args:
 value: args
+calling obj-func-path? with
+system/script/args:
+after calling calling obj-func-path?
+path: system/script/args
+fpath: objects/system/script
 found?: make object! [
     title: none
     header: none
@@ -44,31 +58,138 @@ found?: make object! [
 ]
 fpath: objects/system/script
 base: objects
+obj?: make object! [
+    title: none
+    header: none
+    parent: none
+    path: none
+    args: none
+]
+dispatch-ctx-keywords
+alt-value: none
+pc: [#system [
+        #either type = 'exe [stack/push get-cmdline-args] [none/push]
+    ] extract-boot-args]
 in comp-expression
 pc in check-infix-operators:
+[#system [
+        #either type = 'exe [stack/push get-cmdline-args] [none/push]
+    ] extract-boot-args]
+none
+comp-expression switch
+#system
+issue!
+after if set?
+path: system/script/args:
+fpath: objects/system/script
+ctx: ctx255
+index: 4
+true-blk: [[word/set-in-ctx ctx255 4]]
+emitting
  
 in comp-expression
 pc in check-infix-operators:
+[extract-boot-args]
+none
+comp-expression switch
+extract-boot-args
+word!
+dispatch-ctx-keywords
+alt-value: none
+pc: [extract-boot-args]
  
 ##################################################################compiling user code
 in comp-expression
 pc in check-infix-operators:
+[
+    b: make op! function [x y] [x + y]
+]
+none
+comp-expression switch
+b:
+set-word!
+going to call dispatch-ctx-keywords with
+b:
+make
+dispatch-ctx-keywords
+alt-value: make
+pc: [make op! function [x y] [x + y]]
+in else
+in comp-substitute-expression
 in comp-expression
 pc in check-infix-operators:
+[make op! function [x y] [x + y]]
+none
+comp-expression switch
+make
+word!
+dispatch-ctx-keywords
+alt-value: none
+pc: [make op! function [x y] [x + y]]
+FETCH-FUNCTIONS2
+[op! function [x y] [x + y]]
+[
+    b: make op! function [x y] [x + y]
+]
+APPENDING FUNCTION4
+[
+    b [op! 2 [x y] none]
+]
+dispatch-ctx-keywords
+alt-value: none
+pc: [make op! function [x y] [x + y]]
 in comp-expression
 pc in check-infix-operators:
+[op! function [x y] [x + y]]
+none
+comp-expression switch
+op!
+word!
+dispatch-ctx-keywords
+alt-value: none
+pc: [op! function [x y] [x + y]]
 in comp-expression
 pc in check-infix-operators:
+[function [x y] [x + y]]
+none
+comp-expression switch
+function
+word!
+dispatch-ctx-keywords
+alt-value: none
+pc: [function [x y] [x + y]]
+add-function in comp-func
+APPENDING FUNCTION3
+[<anon361> [function! 2 [x y] none]]
+APPENDING FUNCTION6
+null
  
-in comp-expression
-pc in check-infix-operators:
-in comp-expression
-pc in check-infix-operators:
-in comp-expression
-in comp-expression
- 
+functions: make hash! [
+    ctx304~eval [function! 2 [code [block! paren!] cmd [issue!] /local after expr] none] 
+    ctx304~do-macro [function! 3 [name pos [block! paren!] arity [integer!] /local cmd saved p v res] none] 
+    ctx304~register-macro [function! 1 [spec [block!] /local cnt rule p name macro pos valid? named?] none] 
+    ctx304~reset [function! 1 [job [none! object!]] none] 
+    ctx304~expand [function! 2 [
+            code [block!] job [none! object!] 
+            /clean 
+            /local rule e pos cond value then else cases body keep? expr src saved file
+        ] [
+            /clean 1 0
+        ]] 
+    expand-directives [function! 1 [
+            {Invokes the preprocessor on argument list, modifying and returning it} 
+            code [block! paren!] "List of Red values to preprocess" 
+            /clean "Clear all previously created macros and words" 
+            /local job
+        ] [
+            /clean 1 0
+        ] ctx304] 
+    image?||320 [function! 1 [value [any-type!]] none] 
+    keep [function! 1 [v /only] [/only 1 0]] 
+    b [op! 2 [x y] none] <anon361> [function! 2 [x y] none]
+]
 "output2d:"
-output: [
+[
     stack/mark-native ~set 
     word/push ~datatype! 
     datatype/push TYPE_DATATYPE 
@@ -100,21 +221,26 @@ output: [
     actions/make* 
     stack/unwind 
     word/set 
-    stack/unwind 
-    stack/reset ------------| "b: make op! function [x y] [x + y]" 
-    stack/mark-func ~probe exec/ctx56 
-    stack/mark-native ~b 
-    integer/push 4 
-    integer/push 5 
-    f_<anon361> 
-    stack/unwind 
-    f_probe 
-    stack/unwind ------------| "probe 4 b 5"
+    stack/unwind ------------| "b: make op! function [x y] [x + y]"
 ]
 in comp-expression
 pc in check-infix-operators:
+[x + y]
+true
 in comp-expression
+comp-expression switch
+x
+word!
+dispatch-ctx-keywords
+alt-value: none
+pc: [x + y]
 in comp-expression
+comp-expression switch
+y
+word!
+dispatch-ctx-keywords
+alt-value: none
+pc: [y]
  
 [
     stack/mark-native ~set 
@@ -125,26 +251,17 @@ in comp-expression
     actions/make* 
     stack/unwind 
     word/set 
-    stack/unwind 
-    stack/reset ------------| "b: make op! function [x y] [x + y]" 
-    stack/mark-func ~probe exec/ctx56 
-    stack/mark-native ~b 
-    integer/push 4 
-    integer/push 5 
-    f_<anon361> 
-    stack/unwind 
-    f_probe 
-    stack/unwind ------------| "probe 4 b 5" #user-code
+    stack/unwind ------------| "b: make op! function [x y] [x + y]" #user-code
 ]
-...compilation time : 29 ms
+...compilation time : 34 ms
 
 Target: Linux 
 
 Compiling to native code...
 Script: "Red/System ELF format emitter" (none)
-...compilation time : 1730 ms
-...linking time     : 243 ms
-...output file size : 104532 bytes
+...compilation time : 2070 ms
+...linking time     : 286 ms
+...output file size : 104176 bytes
 ...output file      : /home/nathan/repos/myred/opTest 
 
 
