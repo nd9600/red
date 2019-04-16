@@ -1087,14 +1087,12 @@ red: context [
             ][
                 pick pos/1 length? fpath
             ]
-            ;reduce [do function-name-without-refinements]
             remove fpath
 
-            function-name: first find/tail function-name-without-refinements fpath
-
-            obj: 	find objects found?
-            ; origin: find-proto obj last function-name-without-refinements
+            obj: find objects found?
             object-name: obj/2
+
+            function-name: first find/tail function-name-without-refinements fpath
             function-name-with-context: decorate-obj-member function-name object-name
             function-name-with-context
         ] [
