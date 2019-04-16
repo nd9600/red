@@ -152,7 +152,9 @@ red: context [
 		quit-on-error
 	]
 	
-	dispatch-ctx-keywords: func [original [any-word! none!] /with alt-value][
+	dispatch-ctx-keywords: func [
+        "compiles functions or objects that are the values to keys in objects, I think"
+        original [any-word! none!] /with alt-value][
 		if path? alt-value [alt-value: alt-value/1]
 
         ; with a: context [b: make op! function [x y][x + y]]
@@ -3857,9 +3859,10 @@ red: context [
 			all [
 				any [word? pc/1 path? pc/1]
 				do take-frame
-				defer: dispatch-ctx-keywords/with original pc/1
+				probe defer: dispatch-ctx-keywords/with original pc/1
 			][]
 			'else [
+                print "in else"
 				if start [emit start]
 				unless any [obj-bound? no-check?][check-redefined name original]
 				check-cloned-function name
@@ -4004,6 +4007,8 @@ red: context [
 														;-- or used in prefix mode.
 
         print "pc in check-infix-operators:"
+        probe pc
+        probe infix? next pc
 		if infix? next pc [
 			substitute: [
 				if paths < length? paths-stack [
@@ -4431,6 +4436,8 @@ red: context [
 	comp-substitute-expression: has [paths mark][
 		paths: length? paths-stack
 		mark: tail output
+
+        print "in comp-substitute-expression"
 		
 		comp-expression
 		
@@ -4473,6 +4480,10 @@ red: context [
 			pc: any [find/reverse pc current-call back pc]
 			throw-error "missing argument"
 		]
+
+        print "comp-expression switch"
+        probe pc/1
+        probe type?/word pc/1
 		
 		switch/default type?/word pc/1 [
 			issue!		[

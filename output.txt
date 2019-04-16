@@ -22,6 +22,15 @@ Compiling /home/nathan/repos/nd9600/myred/objOpTest.red ...
 ...using libRedRT built on 10-Apr-2019/10:44:15+1:00
 in comp-expression
 pc in check-infix-operators:
+[
+    system/script/args: #system [
+        #either type = 'exe [stack/push get-cmdline-args] [none/push]
+    ] extract-boot-args
+]
+none
+comp-expression switch
+system/script/args:
+set-path!
 in comp-path
 [
     system/script/args: #system [
@@ -61,6 +70,13 @@ none
 #system
 in comp-expression
 pc in check-infix-operators:
+[#system [
+        #either type = 'exe [stack/push get-cmdline-args] [none/push]
+    ] extract-boot-args]
+none
+comp-expression switch
+#system
+issue!
 after if set?
 path: system/script/args:
 fpath: objects/system/script
@@ -79,6 +95,11 @@ words: [_context/get ~system as cell! ~script as cell! ~args]
  
 in comp-expression
 pc in check-infix-operators:
+[extract-boot-args]
+none
+comp-expression switch
+extract-boot-args
+word!
 dispatch-ctx-keywords
 none
 extract-boot-args
@@ -86,6 +107,13 @@ extract-boot-args
 ##################################################################compiling user code
 in comp-expression
 pc in check-infix-operators:
+[
+    a: context [b: make op! function [x y] [x + y]]
+]
+none
+comp-expression switch
+a:
+set-word!
 going to call dispatch-ctx-keywords with
 a:
 context
@@ -94,14 +122,27 @@ context
 context
 in comp-expression
 pc in check-infix-operators:
+[b: make op! function [x y] [x + y]]
+none
+comp-expression switch
+b:
+set-word!
 going to call dispatch-ctx-keywords with
 b:
 make
 dispatch-ctx-keywords
 make
 make
+false
+in else
+in comp-substitute-expression
 in comp-expression
 pc in check-infix-operators:
+[make op! function [x y] [x + y]]
+none
+comp-expression switch
+make
+word!
 dispatch-ctx-keywords
 none
 make
@@ -115,11 +156,21 @@ none
 make
 in comp-expression
 pc in check-infix-operators:
+[op! function [x y] [x + y]]
+none
+comp-expression switch
+op!
+word!
 dispatch-ctx-keywords
 none
 op!
 in comp-expression
 pc in check-infix-operators:
+[function [x y] [x + y]]
+none
+comp-expression switch
+function
+word!
 dispatch-ctx-keywords
 none
 function
@@ -129,6 +180,9 @@ APPENDING FUNCTION3
 APPENDING FUNCTION6
 ctx361
  
+[
+    object/init-push ctx361 362 false
+]
  
 "output2d:"
 output: [
@@ -173,11 +227,19 @@ output: [
 ]
 in comp-expression
 pc in check-infix-operators:
+[x + y]
+true
 in comp-expression
+comp-expression switch
+x
+word!
 dispatch-ctx-keywords
 none
 x
 in comp-expression
+comp-expression switch
+y
+word!
 dispatch-ctx-keywords
 none
 y
@@ -199,14 +261,14 @@ y
     word/set 
     stack/unwind ------------| "a: context [b: make op! function [x y] [x + y]]" #user-code
 ]
-...compilation time : 20 ms
+...compilation time : 21 ms
 
 Target: Linux 
 
 Compiling to native code...
 Script: "Red/System ELF format emitter" (none)
-...compilation time : 1232 ms
-...linking time     : 144 ms
+...compilation time : 1030 ms
+...linking time     : 146 ms
 ...output file size : 104784 bytes
 ...output file      : /home/nathan/repos/nd9600/myred/objOpTest 
 
