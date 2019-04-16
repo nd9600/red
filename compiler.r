@@ -1029,7 +1029,9 @@ red: context [
 			]
             ?? fun
             ?? fpath
-			unless function! = attempt [do fun][return none] ;-- not a function call
+            doing: attempt [do fun]
+            ?? doing
+			;unless function! = doing [return none] ;-- not a function call
 			remove fpath								;-- remove 'objects prefix
 		]
         ; fpath is now 'a
@@ -1101,7 +1103,7 @@ red: context [
 	]
 	
 	infix?: func [pos [block! paren!] /local specs left][
-        if (pos == [a/b 5]) [
+        if (false and (pos == [a/b 5])) [
             print "######################################################################"
             print "POS IS:"
             probe pos
@@ -1156,8 +1158,8 @@ red: context [
         ]
 		all [
 			not tail? pos
-			any [word? pos/1 path? pos/1]
-			specs: select functions either (path? pos/1) [back tail pos/1] [pos/1]
+			word? pos/1
+			specs: select functions pos/1
 			'op! = specs/1
 			not all [									;-- check if a literal argument is not expected
 				word? left: pos/-1
@@ -1505,16 +1507,20 @@ red: context [
 		while [not head? path: back path][
 			emit pick [eval-int-path eval-path] integer? path/1
 		]												;-- path should be at head again
+
+        print "in emit-path"
 		
 		words: clear []
 		blk: []
 		forall path [
+            ?? path
 			append words either integer? item: path/1 [item][
 				get?: to logic! any [head? path get-word? item]
-				get-path-word item clear blk get?
+				probe get-path-word item clear blk get?
 			]
 		]
 		emit words
+        ?? words
 		
 		new-line/all mark no
 		new-line pos yes
@@ -3367,8 +3373,9 @@ red: context [
 			set [fpath symbol ctx] probe obj-func-path? path
 		][
             ; if path is 'b, [fpath symbol ctx] is [b ctx361~b ctx361]
-            ; if it's not [a set-word!, in the interpreter, or the path! has an integer in it], and 
-            print "hello"
+            ; if it's not [a set-word!, in the interpreter, or the path! has an integer in it], and [fpath symbol ctx] are set, then do this
+            ; 'fpath is the full path to the object, I think, so objects/a
+            print "hello1"
             ?? get?
             ?? fpath
             ?? symbol
@@ -3376,19 +3383,27 @@ red: context [
 			either get? [
 				check-new-func-name path symbol ctx
 			][
-                ;b1
                 probe "SHOULD PROBABLY CHANGE HERE"
+                ?? functions
+                ?? objects
+                ?? symbols
+                ?? sym-table
+                ?? contexts
 				pc: next pc
 				comp-call/with fpath functions/:symbol symbol ctx
 				exit
 			]
 		]
+
+        print "after calling calling obj-func-path?"
 		
 		obj?: all [
 			not any [dynamic? find path integer!]
 			set [obj fpath] object-access? path
 			obj
 		]
+
+        ?? obj?
 		
 		if set? [
 			pc: next pc
@@ -3401,7 +3416,10 @@ red: context [
 			]
 			if block? defer [emit defer]
 		]
-		
+
+        print "after if set?"
+        ?? path
+        ?? fpath
 
 		if obj-field?: all [
 			obj? 
@@ -3409,14 +3427,35 @@ red: context [
 			any [self? (length? path) = length? fpath]	;-- allow only object-path/field forms
 		][
 			ctx: second obj: find objects obj
+
+            ; finds the index of 'b in the object 'a (it's 0)
 			unless index: get-word-index/with last path ctx [
 				throw-error ["word" last path "not defined in" path]
 			]
+
+            ?? ctx
+            ?? index
+
+            if (ctx == 'ctx361) [
+                print "hello"
+                ?? functions
+                ?? objects
+                ?? symbols
+                ?? sym-table
+                ?? contexts					;-- storage for statically compiled contexts
+                print "contexts path"
+                probe get pick contexts/ctx361 (index + 1)
+                ?? shadow-funcs				;-- shadow functions contexts [symbol object! ctx...]
+                ?? functions
+            ]
 			
 			true-blk: compose/deep pick [
 				[[word/set-in-ctx (ctx) (index)]]
 				[[word/get-local  (ctx) (index)]]
 			] set?
+
+            ; [[word/get-local ctx361 0]]
+            ?? true-blk
 			
 			mark: none
 			either self? [
@@ -3426,6 +3465,8 @@ red: context [
 				mark: tail output
 				emit first true-blk
 			][
+                print "emitting"
+                ; either object/unchanged? ~a 362 [word/get-local ctx361 0]
 				emit compose [
 					either (emit-deep-check path fpath) (true-blk)
 				]
@@ -3545,6 +3586,10 @@ red: context [
 			item name compact? refs ref? cnt pos ctx mark list offset emit-no-ref
 			args option stop? original
 	][
+
+        ; call  spec              swmbol ctx-name
+        ; fpath functions/:symbol symbol ctx
+
 		either all [not thru spec/1 = 'intrinsic!][
 			switch any [all [path? call call/1] call] keywords
 		][
