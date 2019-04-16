@@ -110,7 +110,7 @@ in comp-expression
 pc in check-infix-operators:
 [
     a: context [b: function [x y] [x + y]] 
-    probe a/b
+    probe a/b 5 6
 ]
 none
 comp-expression switch
@@ -129,11 +129,6 @@ set-word!
 going to call dispatch-ctx-keywords with
 b:
 function
-original: b:
-src-name: b
-pc: [function [x y] [x + y]]
-false
-false
 in get-prefix-func
 obj-stack: objects/
 a
@@ -145,9 +140,6 @@ objects/
 a
 path: ctx361
 word: b
-src-name: ctx361~b
-name: ctx361~b
-add-function in comp-func
 APPENDING FUNCTION3
 [ctx361~b [function! 2 [x y] none]]
 APPENDING FUNCTION6
@@ -157,9 +149,23 @@ ctx361
 in comp-expression
 pc in check-infix-operators:
 [
-    probe a/b
+    probe a/b 5 6
 ]
+path: a/b
+fpath: objects/a
+found?: make object! [
+    b: function!
+]
+fpath: objects/a
+base: objects
 none
+path: a/b
+fpath: objects/a
+found?: make object! [
+    b: function!
+]
+fpath: objects/a
+base: objects
 comp-expression switch
 probe
 word!
@@ -174,14 +180,21 @@ end obj-stack
 path!
 returning probe
 in comp-expression
+path: a/b
+fpath: objects/a
+found?: make object! [
+    b: function!
+]
+fpath: objects/a
+base: objects
 pc in check-infix-operators:
-[a/b]
+[a/b 5 6]
 none
 comp-expression switch
 a/b
 path!
 in comp-path
-[a/b]
+[a/b 5 6]
 a/b
 path: a/b
 in get-prefix-func
@@ -206,10 +219,6 @@ found?: make object! [
 ]
 fpath: objects/a
 base: objects
-fun: objects/a/b
-fpath: objects/a
-doing: function!
-fpath: a
 obj: [make object! [
         b: function!
     ] ctx361 362 none none]
@@ -231,8 +240,125 @@ path!
 returning ctx361~b
 in comp-expression
 pc in check-infix-operators:
-[]
+[5 6]
 none
-*** Compilation Error: missing argument 
-*** in file: /home/nathan/repos/myred/objFuncTest.red
-*** near: [a/b]
+comp-expression switch
+5
+integer!
+in comp-expression
+pc in check-infix-operators:
+[6]
+none
+comp-expression switch
+6
+integer!
+ 
+functions: make hash! [
+    ctx304~fetch-next [function! 1 [code [block! paren!] /local base arity value path] none] 
+    ctx304~eval [function! 2 [code [block! paren!] cmd [issue!] /local after expr] none] 
+    ctx304~do-macro [function! 3 [name pos [block! paren!] arity [integer!] /local cmd saved p v res] none] 
+    ctx304~register-macro [function! 1 [spec [block!] /local cnt rule p name macro pos valid? named?] none] 
+    ctx304~reset [function! 1 [job [none! object!]] none] 
+    ctx304~expand [function! 2 [
+            code [block!] job [none! object!] 
+            /clean 
+            /local rule e pos cond value then else cases body keep? expr src saved file
+        ] [
+            /clean 1 0
+        ]] 
+    expand-directives [function! 1 [
+            {Invokes the preprocessor on argument list, modifying and returning it} 
+            code [block! paren!] "List of Red values to preprocess" 
+            /clean "Clear all previously created macros and words" 
+            /local job
+        ] [
+            /clean 1 0
+        ] ctx304] 
+    image?||320 [function! 1 [value [any-type!]] none] 
+    keep [function! 1 [v /only] [/only 1 0]] ctx361~b [function! 2 [x y] none]
+]
+"output2d:"
+[
+    stack/mark-native ~set 
+    word/push ~datatype! 
+    datatype/push TYPE_DATATYPE 
+    word/set 
+    stack/unwind 
+    stack/reset 
+    #script %/home/nathan/repos/myred/objFuncTest.red 
+    #either type = 'exe [stack/push get-cmdline-args] [none/push] 
+    #script %/home/nathan/repos/myred/objFuncTest.red 
+    either all [
+        object/unchanged? ~system 211 
+        object/unchanged2? ctx210 12 256
+    ] [word/set-in-ctx ctx255 4] [
+        stack/mark-func ~eval-set-path exec/ctx175 
+        if stack/arguments > stack/bottom [stack/push stack/arguments - 1] 
+        object/path-parent/header: TYPE_NONE 
+        set-path* eval-path _context/get ~system as cell! ~script as cell! ~args 
+        stack/unwind
+    ] 
+    stack/reset ------------| {system/script/args: #system [ #either type = 'exe ...} 
+    stack/mark-func ~extract-boot-args exec/ctx183 
+    f_extract-boot-args 
+    stack/unwind ------------| "extract-boot-args" #user-code ------------| "a: context [b]" 
+    stack/mark-native ~body 
+    stack/mark-native ~set 
+    _function/push get-root 2 get-root 3 ctx363 as integer! :f_ctx361~b ctx361 
+    word/set-in ctx361 0 
+    stack/unwind ------------| "b: function [x y] [x + y]" 
+    stack/revert 
+    stack/mark-native ~set 
+    word/push ~a 
+    object/init-push ctx361 362 false 
+    word/set 
+    stack/unwind 
+    stack/reset ------------| "a: context [b: function [x y] [x + y]]" 
+    stack/mark-func ~probe exec/ctx56 
+    stack/mark-func ~b exec/ctx363 
+    integer/push 5 
+    integer/push 6 
+    f_ctx361~b ctx361 
+    stack/unwind 
+    f_probe 
+    stack/unwind ------------| "probe a/b 5 6"
+]
+in comp-expression
+pc in check-infix-operators:
+[x + y]
+true
+in comp-expression
+comp-expression switch
+x
+word!
+in comp-expression
+comp-expression switch
+y
+word!
+ 
+[------------| "a: context [b]" 
+    stack/mark-native ~body 
+    stack/mark-native ~set 
+    _function/push get-root 2 get-root 3 ctx363 as integer! :f_ctx361~b ctx361 
+    word/set-in ctx361 0 
+    stack/unwind ------------| "b: function [x y] [x + y]" 
+    stack/revert 
+    stack/mark-native ~set 
+    word/push ~a 
+    object/init-push ctx361 362 false 
+    word/set 
+    stack/unwind 
+    stack/reset ------------| "a: context [b: function [x y] [x + y]]" 
+    stack/mark-func ~probe exec/ctx56 
+    stack/mark-func ~b exec/ctx363 
+    integer/push 5 
+    integer/push 6 
+    f_ctx361~b ctx361 
+    stack/unwind 
+    f_probe 
+    stack/unwind ------------| "probe a/b 5 6" #user-code
+]
+*** Driver Internal Error: Script Error : Cannot use xor~ on none! value 
+*** Where: throw-on-error 
+*** Near:  [round (time/second * 1000) + (time/minute * 60000)] 
+

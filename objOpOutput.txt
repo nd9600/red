@@ -110,7 +110,7 @@ in comp-expression
 pc in check-infix-operators:
 [
     a: context [b: make op! function [x y] [x + y]] 
-    probe 4 a/b 5
+    probe a/b 5
 ]
 none
 comp-expression switch
@@ -190,9 +190,6 @@ none
 comp-expression switch
 function
 word!
-original: op!
-name: <anon363>
-add-function in comp-func
 APPENDING FUNCTION3
 [<anon363> [function! 2 [x y] none]]
 APPENDING FUNCTION6
@@ -202,56 +199,8 @@ ctx361
 in comp-expression
 pc in check-infix-operators:
 [
-    probe 4 a/b 5
+    probe a/b 5
 ]
-none
-comp-expression switch
-probe
-word!
-in get-prefix-func
-obj-stack: objects
-end obj-stack
-path!
-returning probe
-in get-prefix-func
-obj-stack: objects
-end obj-stack
-path!
-returning probe
-in comp-expression
-pc in check-infix-operators:
-[4 a/b 5]
-none
-comp-expression switch
-4
-integer!
- 
-in comp-expression
-pc in check-infix-operators:
-[a/b 5]
-none
-comp-expression switch
-a/b
-path!
-in comp-path
-[a/b 5]
-a/b
-path: a/b
-in get-prefix-func
-obj-stack: objects
-end obj-stack
-path!
-returning a
-value: a
-path: b
-in get-prefix-func
-obj-stack: objects
-end obj-stack
-path!
-returning b
-value: b
-calling obj-func-path? with
-a/b
 path: a/b
 fpath: objects/a
 found?: make object! [
@@ -259,35 +208,26 @@ found?: make object! [
 ]
 fpath: objects/a
 base: objects
-fun: objects/a/b
+true
+path: a/b
 fpath: objects/a
-doing: none
-fpath: a
-obj: [make object! [
-        b: none
-    ] ctx361 362 none none]
-origin: none
-name: ctx361
-symbol: ctx361~b
-make hash! [ctx361~b [op! 2 [x y] none] <anon363> [function! 2 [x y] none ctx361]]
-[b ctx361~b ctx361]
-hello1
-get?: none
-fpath: b
-symbol: ctx361~b
-ctx: ctx361
-"SHOULD PROBABLY CHANGE HERE"
-in comp-expression
-pc in check-infix-operators:
+found?: make object! [
+    b: none
+]
+fpath: objects/a
+base: objects
+path: a/b
+fpath: objects/a
+found?: make object! [
+    b: none
+]
+fpath: objects/a
+base: objects
 [5]
-none
-comp-expression switch
-5
-integer!
-in comp-expression
-pc in check-infix-operators:
-[]
-none
-*** Compilation Error: missing argument 
-*** in file: /home/nathan/repos/myred/objOpTest.red
-*** near: [5]
+a/b
+*** Red Compiler Internal Error: Script Error : emit-open-frame expected name argument of type: word 
+*** Where: check-infix-operators 
+*** Near:  [emit-open-frame op 
+pos: skip pos
+] 
+

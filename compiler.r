@@ -1040,15 +1040,9 @@ red: context [
 			][
 				pick path length? fpath
 			]
-            ?? fun
-            ?? fpath
-            doing: attempt [do fun]
-            ?? doing
-			;unless function! = doing [return none] ;-- not a function call
+			unless function! = attempt [do fun] [return none] ;-- not a function call
 			remove fpath								;-- remove 'objects prefix
 		]
-        ; fpath is now 'a
-        ?? fpath
 
 		obj: 	find objects found?
 		origin: find-proto obj last fun
@@ -1117,63 +1111,34 @@ red: context [
 	]
 	
 	infix?: func [pos [block! paren!] /local specs left][
-        if (false and (pos == [a/b 5])) [
-            print "######################################################################"
-            print "POS IS:"
-            probe pos
-            probe pos/1
+        function-to-search-for: either (path? pos/1) [ ; if an op! is being made inside an object!, it needs the object's ctx in-front, like ctx361~f (#3482)
+            path: to path! pos/1
+            forall path [
+                value: path/1
+                add-symbol value
+            ]
+            set [found? fpath base] search-obj to path! pos/1
+            
+            fun: append copy fpath either base = obj-stack [ ;-- extract function access path without refinements
+                pick path 1 + (length? fpath) - (length? obj-stack)
+            ][
+                pick path length? fpath
+            ]
+            reduce [do fun]
+            remove fpath
 
-            print " "
-            probe not tail? pos
-            probe any [word? pos/1 path? pos/1]
-            probe specs: select functions 
-                either (path? pos/1) [
-                    path: to path! pos/1
-                    forall path [
-                        value: path/1
-                        add-symbol value
-                    ]
-                    set [found? fpath base] search-obj to path! pos/1
-                    probe reduce [found? fpath base]
-                    
-                    fun: append copy fpath either base = obj-stack [ ;-- extract function access path without refinements
-                        pick path 1 + (length? fpath) - (length? obj-stack)
-                    ][
-                        pick path length? fpath
-                    ]
-                    ?? fun
-                    probe reduce [do fun]
-                    remove fpath
-
-                    obj: 	find objects found?
-                    origin: find-proto obj last fun
-                    name:	either origin [select objects origin][obj/2] ; the symbol of the containing object (e.g. 'a), like ctx361
-                    symbol: decorate-obj-member first find/tail fun fpath name ; the symbol of the full path, like ctx361~b
-
-                    ?? obj
-                    ?? origin
-                    ?? name
-                    ?? symbol
-                    probe find functions symbol ; this should be an op!, but it's 'none instead
-
-                    quit
-                    
-                    ] [
-                        pos/1
-                    ]
-            ?? specs
-            probe 'op! = specs/1
-			probe not all [									;-- check if a literal argument is not expected
-				word? left: pos/-1
-				not local-word? left
-				specs: select functions left
-				literal-first-arg? specs/3				;-- literal arg needed, disable infix mode
-			]
+            obj: 	find objects found?
+            origin: find-proto obj last fun
+            name:	either origin [select objects origin][obj/2]
+            symbol: decorate-obj-member first find/tail fun fpath name
+            symbol
+        ] [
+            pos/1
         ]
 		all [
 			not tail? pos
-			word? pos/1
-			specs: select functions pos/1
+			any [word? pos/1 path? pos/1]
+			specs: select functions function-to-search-for
 			'op! = specs/1
 			not all [									;-- check if a literal argument is not expected
 				word? left: pos/-1
@@ -1469,7 +1434,7 @@ red: context [
         print "in fetch-functions"
         ?? pc
         ?? pos
-        either all [(pc/-1 == 'make) (pc/1 == first [op!])] [ ; if e.g. the key-value pair is f: make op! function [x y] [x + y], we need to comiple it differently, so that it's added to 'functions (#3482)
+        either all [(pc/-1 == 'make) (pc/1 == first [op!])] [ ; if an op! is being made inside an object! (e.g. f: make op! function [x y] [x + y]), it needs to be compiled differently, so that it's added to 'functions with the context in-front of the op! name, like ctx361~f (#3482)
             print "in either's true block"
             original: pos/1
             src-name: to word! original
@@ -2902,7 +2867,6 @@ red: context [
 			return defer
 		]
 		original: pc/-1
-        ?? original
 		case [
 			set-path? original [
 				path: original
@@ -2917,15 +2881,10 @@ red: context [
 			]
 			find [set-word! lit-word!] type?/word :original [
 				src-name: to word! original
-                ?? src-name
-                ?? pc
-                probe lit-word? :original
-                probe pc/-2 = 'set
 				unless global?: all [lit-word? :original pc/-2 = 'set][
 					src-name: get-prefix-func src-name
 				]
 				name: check-func-name src-name
-                ?? src-name
 				add-symbol/with word: to word! clean-lf-flag name to word! clean-lf-flag original
 				unless any [
 					local-word? name
@@ -2935,10 +2894,7 @@ red: context [
 				]
 			]
 			'else [name: generate-anon-name]			;-- unassigned function case
-		]
-
-        ?? name
-		
+		]		
 		pc: next pc
 		set [spec body] pc
 		case [
@@ -2947,7 +2903,6 @@ red: context [
 			has		[spec: head insert copy spec /local]
 		]
 		set [symbols locals-nb] check-spec spec
-        print "add-function in comp-func"
 		add-function name spec
 		if pos: find spec return-def [register-user-type/store name pos/2]
 

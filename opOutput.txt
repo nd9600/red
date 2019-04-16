@@ -65,11 +65,6 @@ obj?: make object! [
     path: none
     args: none
 ]
-dispatch-ctx-keywords
-alt-value: none
-pc: [#system [
-        #either type = 'exe [stack/push get-cmdline-args] [none/push]
-    ] extract-boot-args]
 in comp-expression
 pc in check-infix-operators:
 [#system [
@@ -86,6 +81,11 @@ ctx: ctx255
 index: 4
 true-blk: [[word/set-in-ctx ctx255 4]]
 emitting
+in get-prefix-func
+obj-stack: objects
+end obj-stack
+path!
+returning eval-set-path
  
 in comp-expression
 pc in check-infix-operators:
@@ -94,9 +94,16 @@ none
 comp-expression switch
 extract-boot-args
 word!
-dispatch-ctx-keywords
-alt-value: none
-pc: [extract-boot-args]
+in get-prefix-func
+obj-stack: objects
+end obj-stack
+path!
+returning extract-boot-args
+in get-prefix-func
+obj-stack: objects
+end obj-stack
+path!
+returning extract-boot-args
  
 ##################################################################compiling user code
 in comp-expression
@@ -111,9 +118,6 @@ set-word!
 going to call dispatch-ctx-keywords with
 b:
 make
-dispatch-ctx-keywords
-alt-value: make
-pc: [make op! function [x y] [x + y]]
 in else
 in comp-substitute-expression
 in comp-expression
@@ -123,21 +127,35 @@ none
 comp-expression switch
 make
 word!
-dispatch-ctx-keywords
-alt-value: none
-pc: [make op! function [x y] [x + y]]
 FETCH-FUNCTIONS2
 [op! function [x y] [x + y]]
 [
     b: make op! function [x y] [x + y]
 ]
+in fetch-functions
+pc: [op! function [x y] [x + y]]
+pos: [
+    b: make op! function [x y] [x + y]
+]
+in either's true block
+in get-prefix-func
+obj-stack: objects
+end obj-stack
+path!
+returning b
+src-name: b
+name: b
+name: b
+spec: [x y]
 APPENDING FUNCTION4
 [
     b [op! 2 [x y] none]
 ]
-dispatch-ctx-keywords
-alt-value: none
-pc: [make op! function [x y] [x + y]]
+in get-prefix-func
+obj-stack: objects
+end obj-stack
+path!
+returning make
 in comp-expression
 pc in check-infix-operators:
 [op! function [x y] [x + y]]
@@ -145,9 +163,11 @@ none
 comp-expression switch
 op!
 word!
-dispatch-ctx-keywords
-alt-value: none
-pc: [op! function [x y] [x + y]]
+in get-prefix-func
+obj-stack: objects
+end obj-stack
+path!
+returning op!
 in comp-expression
 pc in check-infix-operators:
 [function [x y] [x + y]]
@@ -155,9 +175,8 @@ none
 comp-expression switch
 function
 word!
-dispatch-ctx-keywords
-alt-value: none
-pc: [function [x y] [x + y]]
+original: op!
+name: <anon361>
 add-function in comp-func
 APPENDING FUNCTION3
 [<anon361> [function! 2 [x y] none]]
@@ -231,16 +250,10 @@ in comp-expression
 comp-expression switch
 x
 word!
-dispatch-ctx-keywords
-alt-value: none
-pc: [x + y]
 in comp-expression
 comp-expression switch
 y
 word!
-dispatch-ctx-keywords
-alt-value: none
-pc: [y]
  
 [
     stack/mark-native ~set 
@@ -253,14 +266,14 @@ pc: [y]
     word/set 
     stack/unwind ------------| "b: make op! function [x y] [x + y]" #user-code
 ]
-...compilation time : 34 ms
+...compilation time : 32 ms
 
 Target: Linux 
 
 Compiling to native code...
 Script: "Red/System ELF format emitter" (none)
-...compilation time : 2070 ms
-...linking time     : 286 ms
+...compilation time : 1857 ms
+...linking time     : 259 ms
 ...output file size : 104176 bytes
 ...output file      : /home/nathan/repos/myred/opTest 
 
