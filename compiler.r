@@ -107,7 +107,7 @@ red: context [
 	]
 
 	func-constructors: [
-		'func | 'function | 'does | 'has | 'routine | 'make 'function!
+		'func | 'function | 'does | 'has | 'routine | 'make 'function! | 'make 'op!
 	]
 
 	functions: make hash! [
@@ -1345,15 +1345,15 @@ red: context [
 	
 	get-prefix-func: func [
         name [word!] 
-        /is-op "used when the function to prefix is an op!"
         /local path word ctx
     ] [
 		if 1 < length? obj-stack [
 			path: copy obj-stack
 			while [1 < length? path][
+                word: in do path name
 				if all [
-                    word: in do path name
-                    any [is-op function! = get word]
+                    word
+                    function! = get word
                 ] [
 					return prefix-func/with name path
 				]
@@ -1394,7 +1394,7 @@ red: context [
             original: pos/1
             src-name: to word! original
             unless global?: all [lit-word? :original pc/-2 = 'set][
-                src-name: get-prefix-func/is-op src-name
+                src-name: get-prefix-func src-name
             ]
             ?? src-name
             name: check-func-name src-name
@@ -1981,7 +1981,6 @@ red: context [
 					| skip
 				]
 			]
-
 			spec: make block! (length? words) / 2
 			forskip words 2 [append spec to word! words/1]
 		][
@@ -2044,7 +2043,7 @@ red: context [
 				find shadow-funcs obj
 			]
 		]
-		
+
 		repend objects [								;-- register shadow object	
 			symbol										;-- object access word
 			obj: make object! words						;-- shadow object
