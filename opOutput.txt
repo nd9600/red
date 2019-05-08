@@ -18,19 +18,14 @@ Script: "Encap virtual filesystem" (21-Sep-2009)
 
 -=== Red Compiler 0.6.4 ===- 
 
-Compiling /home/nathan/repos/myred/opTest.red ...
-...using libRedRT built on 14-Apr-2019/21:21:54+1:00
+Compiling /home/nathan/repos/nd9600/myred/opTest.red ...
+...using libRedRT built on 10-Apr-2019/10:44:15+1:00
 in comp-expression
-pc in check-infix-operators:
-[
+pc in check-infix-operators: [
     system/script/args: #system [
         #either type = 'exe [stack/push get-cmdline-args] [none/push]
     ] extract-boot-args
 ]
-none
-comp-expression switch
-system/script/args:
-set-path!
 in comp-path
 [
     system/script/args: #system [
@@ -46,103 +41,40 @@ path: args:
 value: args
 calling obj-func-path? with
 system/script/args:
-after calling calling obj-func-path?
-path: system/script/args
-fpath: objects/system/script
-found?: make object! [
-    title: none
-    header: none
-    parent: none
-    path: none
-    args: none
-]
-fpath: objects/system/script
-base: objects
-obj?: make object! [
-    title: none
-    header: none
-    parent: none
-    path: none
-    args: none
-]
 in comp-expression
-pc in check-infix-operators:
-[#system [
+pc in check-infix-operators: [#system [
         #either type = 'exe [stack/push get-cmdline-args] [none/push]
     ] extract-boot-args]
-none
-comp-expression switch
-#system
-issue!
-after if set?
-path: system/script/args:
-fpath: objects/system/script
-ctx: ctx255
-index: 4
-true-blk: [[word/set-in-ctx ctx255 4]]
-emitting
-in get-prefix-func
-obj-stack: objects
-end obj-stack
-path!
-returning eval-set-path
- 
 in comp-expression
-pc in check-infix-operators:
-[extract-boot-args]
-none
-comp-expression switch
-extract-boot-args
-word!
-in get-prefix-func
-obj-stack: objects
-end obj-stack
-path!
-returning extract-boot-args
-in get-prefix-func
-obj-stack: objects
-end obj-stack
-path!
-returning extract-boot-args
- 
+pc in check-infix-operators: [extract-boot-args]
 ##################################################################compiling user code
 in comp-expression
-pc in check-infix-operators:
-[
-    b: make op! function [x y] [x + y]
+pc in check-infix-operators: [
+    b: make op! function [x y] [x + y] 
+    probe 4 b 5
 ]
-none
-comp-expression switch
-b:
-set-word!
-going to call dispatch-ctx-keywords with
-b:
-make
-in else
 in comp-substitute-expression
 in comp-expression
-pc in check-infix-operators:
-[make op! function [x y] [x + y]]
-none
-comp-expression switch
-make
-word!
+pc in check-infix-operators: [make op! function [x y] [x + y] 
+    probe 4 b 5
+]
 FETCH-FUNCTIONS2
-[op! function [x y] [x + y]]
+[op! function [x y] [x + y] 
+    probe 4 b 5
+]
 [
-    b: make op! function [x y] [x + y]
+    b: make op! function [x y] [x + y] 
+    probe 4 b 5
 ]
 in fetch-functions
-pc: [op! function [x y] [x + y]]
+pc: [op! function [x y] [x + y] 
+    probe 4 b 5
+]
 pos: [
-    b: make op! function [x y] [x + y]
+    b: make op! function [x y] [x + y] 
+    probe 4 b 5
 ]
 in either's true block
-in get-prefix-func
-obj-stack: objects
-end obj-stack
-path!
-returning b
 src-name: b
 name: b
 name: b
@@ -151,38 +83,37 @@ APPENDING FUNCTION4
 [
     b [op! 2 [x y] none]
 ]
-in get-prefix-func
-obj-stack: objects
-end obj-stack
-path!
-returning make
 in comp-expression
-pc in check-infix-operators:
-[op! function [x y] [x + y]]
-none
-comp-expression switch
-op!
-word!
-in get-prefix-func
-obj-stack: objects
-end obj-stack
-path!
-returning op!
+pc in check-infix-operators: [op! function [x y] [x + y] 
+    probe 4 b 5
+]
 in comp-expression
-pc in check-infix-operators:
-[function [x y] [x + y]]
-none
-comp-expression switch
-function
-word!
-original: op!
-name: <anon361>
-add-function in comp-func
+pc in check-infix-operators: [function [x y] [x + y] 
+    probe 4 b 5
+]
 APPENDING FUNCTION3
 [<anon361> [function! 2 [x y] none]]
 APPENDING FUNCTION6
 null
- 
+in comp-expression
+pc in check-infix-operators: [
+    probe 4 b 5
+]
+in comp-expression
+pc in check-infix-operators: [4 b 5]
+check-infix-operators, is infix
+pos: [5]
+substitute: [
+    if paths < length? paths-stack [
+        emit [stack/push pos +] 
+        emit cnt 
+        insert-lf -4 
+        cnt: cnt + 1
+    ]
+]
+end: [5]
+in comp-expression
+in comp-expression
 functions: make hash! [
     ctx304~eval [function! 2 [code [block! paren!] cmd [issue!] /local after expr] none] 
     ctx304~do-macro [function! 3 [name pos [block! paren!] arity [integer!] /local cmd saved p v res] none] 
@@ -215,9 +146,9 @@ functions: make hash! [
     word/set 
     stack/unwind 
     stack/reset 
-    #script %/home/nathan/repos/myred/opTest.red 
+    #script %/home/nathan/repos/nd9600/myred/opTest.red 
     #either type = 'exe [stack/push get-cmdline-args] [none/push] 
-    #script %/home/nathan/repos/myred/opTest.red 
+    #script %/home/nathan/repos/nd9600/myred/opTest.red 
     either all [
         object/unchanged? ~system 211 
         object/unchanged2? ctx210 12 256
@@ -240,21 +171,21 @@ functions: make hash! [
     actions/make* 
     stack/unwind 
     word/set 
-    stack/unwind ------------| "b: make op! function [x y] [x + y]"
+    stack/unwind 
+    stack/reset ------------| "b: make op! function [x y] [x + y]" 
+    stack/mark-func ~probe exec/ctx56 
+    stack/mark-native ~b 
+    integer/push 4 
+    integer/push 5 
+    f_<anon361> 
+    stack/unwind 
+    f_probe 
+    stack/unwind ------------| "probe 4 b 5"
 ]
 in comp-expression
-pc in check-infix-operators:
-[x + y]
-true
+pc in check-infix-operators: [x + y]
 in comp-expression
-comp-expression switch
-x
-word!
 in comp-expression
-comp-expression switch
-y
-word!
- 
 [
     stack/mark-native ~set 
     word/push ~b 
@@ -264,17 +195,26 @@ word!
     actions/make* 
     stack/unwind 
     word/set 
-    stack/unwind ------------| "b: make op! function [x y] [x + y]" #user-code
+    stack/unwind 
+    stack/reset ------------| "b: make op! function [x y] [x + y]" 
+    stack/mark-func ~probe exec/ctx56 
+    stack/mark-native ~b 
+    integer/push 4 
+    integer/push 5 
+    f_<anon361> 
+    stack/unwind 
+    f_probe 
+    stack/unwind ------------| "probe 4 b 5" #user-code
 ]
-...compilation time : 32 ms
+...compilation time : 19 ms
 
 Target: Linux 
 
 Compiling to native code...
 Script: "Red/System ELF format emitter" (none)
-...compilation time : 1857 ms
-...linking time     : 259 ms
-...output file size : 104176 bytes
-...output file      : /home/nathan/repos/myred/opTest 
+...compilation time : 900 ms
+...linking time     : 114 ms
+...output file size : 104572 bytes
+...output file      : /home/nathan/repos/nd9600/myred/opTest 
 
 

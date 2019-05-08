@@ -3914,9 +3914,8 @@ red: context [
 		if infix? pc [return false]						;-- infix op already processed,
 														;-- or used in prefix mode.
 
-        print "pc in check-infix-operators:"
+        prin "pc in check-infix-operators: "
         probe pc
-        probe infix? next pc
 		if infix? next pc [
 			substitute: [
 				if paths < length? paths-stack [
@@ -3932,9 +3931,14 @@ red: context [
 			
 			ops: make block! 1
 			pos: end
-            if (next pc) == [a/b 5] [
-                probe pos
-                probe pos/-1
+            if any [
+                (next pc) == [a/b 5] 
+                (next pc) == [b 5] 
+            ] [
+                print "check-infix-operators, is infix"
+                ?? pos
+                ?? substitute
+                ?? end
             ]									;-- start from end of expression
 			until [
 				op: pos/-1			

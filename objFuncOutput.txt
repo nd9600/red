@@ -58,31 +58,13 @@ in comp-expression
 pc in check-infix-operators:
 [
     a: context [b: function [x y] [x + y]] 
-    probe a/b 5 6
+    probe a/b 4 5
 ]
 none
-in comp-context
-[context [b: function [x y] [x + y]] 
-    probe a/b 5 6
-]
-words: []
-words: [b: function!]
-APPENDING TO OBJECTS
-words: [b: function!]
-"a b: function!^/"
 in comp-expression
 pc in check-infix-operators:
 [b: function [x y] [x + y]]
 none
-in get-prefix-func
-path: objects/
-a
-name: b
-word: b
-function!
-make object! [
-    b: function!
-]
 APPENDING FUNCTION3
 [ctx361~b [function! 2 [x y] none]]
 APPENDING FUNCTION6
@@ -90,15 +72,15 @@ ctx361
 in comp-expression
 pc in check-infix-operators:
 [
-    probe a/b 5 6
+    probe a/b 4 5
 ]
 none
 in comp-expression
 pc in check-infix-operators:
-[a/b 5 6]
+[a/b 4 5]
 none
 in comp-path
-[a/b 5 6]
+[a/b 4 5]
 a/b
 path: a/b
 value: a
@@ -110,11 +92,11 @@ a/b
 "SHOULD PROBABLY CHANGE HERE"
 in comp-expression
 pc in check-infix-operators:
-[5 6]
+[4 5]
 none
 in comp-expression
 pc in check-infix-operators:
-[6]
+[5]
 none
 functions: make hash! [
     ctx304~fetch-next [function! 1 [code [block! paren!] /local base arity value path] none] 
@@ -179,12 +161,12 @@ functions: make hash! [
     stack/reset ------------| "a: context [b: function [x y] [x + y]]" 
     stack/mark-func ~probe exec/ctx56 
     stack/mark-func ~b exec/ctx363 
+    integer/push 4 
     integer/push 5 
-    integer/push 6 
     f_ctx361~b ctx361 
     stack/unwind 
     f_probe 
-    stack/unwind ------------| "probe a/b 5 6"
+    stack/unwind ------------| "probe a/b 4 5"
 ]
 in comp-expression
 pc in check-infix-operators:
@@ -207,21 +189,21 @@ in comp-expression
     stack/reset ------------| "a: context [b: function [x y] [x + y]]" 
     stack/mark-func ~probe exec/ctx56 
     stack/mark-func ~b exec/ctx363 
+    integer/push 4 
     integer/push 5 
-    integer/push 6 
     f_ctx361~b ctx361 
     stack/unwind 
     f_probe 
-    stack/unwind ------------| "probe a/b 5 6" #user-code
+    stack/unwind ------------| "probe a/b 4 5" #user-code
 ]
-...compilation time : 21 ms
+...compilation time : 19 ms
 
 Target: Linux 
 
 Compiling to native code...
 Script: "Red/System ELF format emitter" (none)
-...compilation time : 1190 ms
-...linking time     : 168 ms
+...compilation time : 901 ms
+...linking time     : 119 ms
 ...output file size : 104972 bytes
 ...output file      : /home/nathan/repos/nd9600/myred/objFuncTest 
 
