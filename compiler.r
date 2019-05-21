@@ -1092,12 +1092,16 @@ red: context [
             obj: find objects found?
             object-name: obj/2
 
-            function-name: first find/tail function-name-without-refinements fpath
-            function-name-with-context: decorate-obj-member function-name object-name
-            function-name-with-context
+            either all [function-name-without-refinements fpath] [
+                function-name: first find/tail function-name-without-refinements fpath
+                function-name-with-context: decorate-obj-member function-name object-name
+                function-name-with-context
+            ] [
+                pos/1
+            ]
         ] [
             pos/1
-        ]
+]
 		all [
 			not tail? pos
 			any [word? pos/1 path? pos/1]
@@ -3914,8 +3918,6 @@ red: context [
 		if infix? pc [return false]						;-- infix op already processed,
 														;-- or used in prefix mode.
 
-        prin "pc in check-infix-operators: "
-        probe pc
 		if infix? next pc [
 			substitute: [
 				if paths < length? paths-stack [
@@ -3930,16 +3932,8 @@ red: context [
 			end: search-expr-end pos					;-- recursive search of expression end
 			
 			ops: make block! 1
-			pos: end
-            if any [
-                (next pc) == [a/b 5] 
-                (next pc) == [b 5] 
-            ] [
-                print "check-infix-operators, is infix"
-                ?? pos
-                ?? substitute
-                ?? end
-            ]									;-- start from end of expression
+			pos: end								    ;-- start from end of expression
+
 			until [
 				op: pos/-1			
 				name: any [select op-actions op op]
