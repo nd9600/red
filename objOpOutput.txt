@@ -75,8 +75,6 @@ op-actions: [+ add - subtract * multiply / divide // modulo % remainder = equal?
 ops: [<anon363>]
 in comp-expression
 in comp-expression
-name: <anon363>
-spec: [function! 2 [x y] none ctx361]
 functions: make hash! [
     ctx304~eval [function! 2 [code [block! paren!] cmd [issue!] /local after expr] none] 
     ctx304~do-macro [function! 3 [name pos [block! paren!] arity [integer!] /local cmd saved p v res] none] 
@@ -162,8 +160,6 @@ op-actions: [+ add - subtract * multiply / divide // modulo % remainder = equal?
 ops: [add]
 in comp-expression
 in comp-expression
-name: add
-spec: [action! 2 ["Returns the sum of the two values" value1 [number! char! pair! tuple! vector! time! date!] value2 [number! char! pair! tuple! vector! time! date!] return: [number! char! pair! tuple! vector! time! date!]] none]
 [------------| "a: context [b]" 
     stack/mark-native ~body 
     stack/mark-native ~set 

@@ -87,8 +87,6 @@ op-actions: [+ add - subtract * multiply / divide // modulo % remainder = equal?
 ops: [<anon361>]
 in comp-expression
 in comp-expression
-name: <anon361>
-spec: [function! 2 [x y] none]
 functions: make hash! [
     ctx304~eval [function! 2 [code [block! paren!] cmd [issue!] /local after expr] none] 
     ctx304~do-macro [function! 3 [name pos [block! paren!] arity [integer!] /local cmd saved p v res] none] 
@@ -170,8 +168,6 @@ op-actions: [+ add - subtract * multiply / divide // modulo % remainder = equal?
 ops: [add]
 in comp-expression
 in comp-expression
-name: add
-spec: [action! 2 ["Returns the sum of the two values" value1 [number! char! pair! tuple! vector! time! date!] value2 [number! char! pair! tuple! vector! time! date!] return: [number! char! pair! tuple! vector! time! date!]] none]
 [
     stack/mark-native ~set 
     word/push ~b 
@@ -192,14 +188,14 @@ spec: [action! 2 ["Returns the sum of the two values" value1 [number! char! pair
     f_probe 
     stack/unwind ------------| "probe 4 b 5" #user-code
 ]
-...compilation time : 26 ms
+...compilation time : 21 ms
 
 Target: Linux 
 
 Compiling to native code...
 Script: "Red/System ELF format emitter" (none)
-...compilation time : 975 ms
-...linking time     : 168 ms
+...compilation time : 928 ms
+...linking time     : 127 ms
 ...output file size : 104560 bytes
 ...output file      : /home/nathan/repos/nd9600/red/opTest 
 

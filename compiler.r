@@ -3997,8 +3997,7 @@ red: context [
 
 				switch/default spec/1 [
 					function! [
-						emit decorate-func name
-						insert-lf either spec/5 [emit spec/5 -2][-1]
+                        either spec/5 [emit-function/with name spec/5] [emit-function name]
 					]
 					routine!  [emit-routine name spec/3]
 				][
