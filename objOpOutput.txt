@@ -21,172 +21,20 @@ Script: "Encap virtual filesystem" (21-Sep-2009)
 Compiling /home/nathan/repos/nd9600/red/objOpTest.red ...
 ...using libRedRT built on 21-May-2019/14:53:10+1:00
 in comp-expression
-in comp-path
-[
-    system/script/args: #system [
-        #either type = 'exe [stack/push get-cmdline-args] [none/push]
-    ] extract-boot-args
+*** Red Compiler Internal Error: Script Error : get-function-name-if-op expected thing argument of type: word path block paren 
+*** Where: infix? 
+*** Near:  [function-to-search-for: get-function-name-if-op pos/1 
+all [
+not tail? pos 
+any [word? pos/1 path? pos/1] 
+specs: select functions function-to-search-for 
+'op! = specs/1 
+not all [
+word? left: pos/-1 
+not local-word? left 
+specs: select functions left 
+literal-first-arg? specs/3
 ]
-system/script/args:
-path: system/script/args:
-value: system
-path: script/args:
-value: script
-path: args:
-value: args
-calling obj-func-path? with
-system/script/args:
-in comp-expression
-in comp-expression
-##################################################################compiling user code
-in comp-expression
-in comp-expression
-in comp-substitute-expression
-in comp-expression
-FETCH-FUNCTIONS2
-[op! function [x y] [x + y]]
-[b: make op! function [x y] [x + y]]
-in fetch-functions
-pc: [op! function [x y] [x + y]]
-pos: [b: make op! function [x y] [x + y]]
-in either's true block
-src-name: ctx361~b
-name: ctx361~b
-name: ctx361~b
-spec: [x y]
-APPENDING FUNCTION4
-[ctx361~b [op! 2 [x y] none]]
-in comp-expression
-in comp-expression
-APPENDING FUNCTION3
-[<anon363> [function! 2 [x y] none]]
-APPENDING FUNCTION6
-ctx361
-in comp-expression
-in comp-expression
-is infix, skipping pos back until pos = pc
-pos: [5]
-pc: [4 a/b 5]
-op-actions: [+ add - subtract * multiply / divide // modulo % remainder = equal? <> not-equal? == strict-equal? =? same? < lesser? > greater? <= lesser-or-equal? >= greater-or-equal? << shift-left >> shift-right >>> shift-logical ** power 
-    and and~ 
-    or or~ 
-    xor xor~ is ctx291~is~ ctx361~b <anon363>
 ]
-ops: [<anon363>]
-in comp-expression
-in comp-expression
-functions: make hash! [
-    ctx304~eval [function! 2 [code [block! paren!] cmd [issue!] /local after expr] none] 
-    ctx304~do-macro [function! 3 [name pos [block! paren!] arity [integer!] /local cmd saved p v res] none] 
-    ctx304~register-macro [function! 1 [spec [block!] /local cnt rule p name macro pos valid? named?] none] 
-    ctx304~reset [function! 1 [job [none! object!]] none] 
-    ctx304~expand [function! 2 [
-            code [block!] job [none! object!] 
-            /clean 
-            /local rule e pos cond value then else cases body keep? expr src saved file
-        ] [
-            /clean 1 0
-        ]] 
-    expand-directives [function! 1 [
-            {Invokes the preprocessor on argument list, modifying and returning it} 
-            code [block! paren!] "List of Red values to preprocess" 
-            /clean "Clear all previously created macros and words" 
-            /local job
-        ] [
-            /clean 1 0
-        ] ctx304] 
-    image?||320 [function! 1 [value [any-type!]] none] 
-    keep [function! 1 [v /only] [/only 1 0]] ctx361~b [op! 2 [x y] none] <anon363> [function! 2 [x y] none ctx361]
-]
-"output2d:"
-[
-    stack/mark-native ~set 
-    word/push ~datatype! 
-    datatype/push TYPE_DATATYPE 
-    word/set 
-    stack/unwind 
-    stack/reset 
-    #script %/home/nathan/repos/nd9600/red/objOpTest.red 
-    #either type = 'exe [stack/push get-cmdline-args] [none/push] 
-    #script %/home/nathan/repos/nd9600/red/objOpTest.red 
-    either all [
-        object/unchanged? ~system 211 
-        object/unchanged2? ctx210 12 256
-    ] [word/set-in-ctx ctx255 4] [
-        stack/mark-func ~eval-set-path exec/ctx175 
-        if stack/arguments > stack/bottom [stack/push stack/arguments - 1] 
-        object/path-parent/header: TYPE_NONE 
-        set-path* eval-path _context/get ~system as cell! ~script as cell! ~args 
-        stack/unwind
-    ] 
-    stack/reset ------------| {system/script/args: #system [ #either type = 'exe ...} 
-    stack/mark-func ~extract-boot-args exec/ctx183 
-    f_extract-boot-args 
-    stack/unwind ------------| "extract-boot-args" #user-code ------------| "a: context [b]" 
-    stack/mark-native ~body 
-    stack/mark-native ~set 
-    stack/mark-native ~make 
-    word/get ~op! 
-    _function/push get-root 2 get-root 3 ctx364 as integer! :f_<anon363> ctx361 
-    actions/make* 
-    stack/unwind 
-    word/set-in ctx361 0 
-    stack/unwind ------------| "b: make op! function [x y] [x + y]" 
-    stack/revert 
-    stack/mark-native ~set 
-    word/push ~a 
-    object/init-push ctx361 362 false 
-    word/set 
-    stack/unwind 
-    stack/reset ------------| "a: context [b: make op! function [x y] [x + y]]" 
-    stack/mark-func ~probe exec/ctx56 
-    stack/mark-native ~ctx361~b 
-    integer/push 4 
-    integer/push 5 
-    f_<anon363> ctx361 
-    stack/unwind 
-    f_probe 
-    stack/unwind ------------| "probe 4 a/b 5"
-]
-in comp-expression
-is infix, skipping pos back until pos = pc
-pos: [y]
-pc: [x + y]
-op-actions: [+ add - subtract * multiply / divide // modulo % remainder = equal? <> not-equal? == strict-equal? =? same? < lesser? > greater? <= lesser-or-equal? >= greater-or-equal? << shift-left >> shift-right >>> shift-logical ** power 
-    and and~ 
-    or or~ 
-    xor xor~ is ctx291~is~ ctx361~b <anon363>
-]
-ops: [add]
-in comp-expression
-in comp-expression
-[------------| "a: context [b]" 
-    stack/mark-native ~body 
-    stack/mark-native ~set 
-    stack/mark-native ~make 
-    word/get ~op! 
-    _function/push get-root 2 get-root 3 ctx364 as integer! :f_<anon363> ctx361 
-    actions/make* 
-    stack/unwind 
-    word/set-in ctx361 0 
-    stack/unwind ------------| "b: make op! function [x y] [x + y]" 
-    stack/revert 
-    stack/mark-native ~set 
-    word/push ~a 
-    object/init-push ctx361 362 false 
-    word/set 
-    stack/unwind 
-    stack/reset ------------| "a: context [b: make op! function [x y] [x + y]]" 
-    stack/mark-func ~probe exec/ctx56 
-    stack/mark-native ~ctx361~b 
-    integer/push 4 
-    integer/push 5 
-    f_<anon363> ctx361 
-    stack/unwind 
-    f_probe 
-    stack/unwind ------------| "probe 4 a/b 5" #user-code
-]
-*** Driver Internal Error: Script Error : Cannot use xor~ on none! value 
-*** Where: throw-on-error 
-*** Near:  [round (time/second * 1000) + (time/minute * 60000)] 
+] 
 

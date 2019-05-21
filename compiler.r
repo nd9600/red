@@ -1077,31 +1077,41 @@ red: context [
 		]
 		no
 	]
-	
-	infix?: func [pos [block! paren!] /local function-to-search-for path found? fpath base function-name-without-refinements function-name  obj object-name function-name-with-context specs left][
-        function-to-search-for: either (path? pos/1) [ ; if an op! is being made inside an object!, it needs the object's context in-front, like ctx361~f (#3482)
-            set [found? fpath base] search-obj pos/1
 
-            function-name-without-refinements: append copy fpath either base = obj-stack [ ;-- extract function access path without refinements
-                pick pos/1 1 + (length? fpath) - (length? obj-stack)
-            ][
-                pick pos/1 length? fpath
-            ]
-            remove fpath
-
-            obj: find objects found?
-            object-name: obj/2
-
-            either all [function-name-without-refinements fpath] [
-                function-name: first find/tail function-name-without-refinements fpath
-                function-name-with-context: decorate-obj-member function-name object-name
-                function-name-with-context
-            ] [
-                pos/1
-            ]
-        ] [
-            pos/1
+    get-function-name: func [
+        thing 
+        /local path found? fpath base function-name-without-refinements function-name obj object-name function-name-with-context
+    ] [
+        ; this returns the name of a function, which is just the word! if it's a word!, or the decorated function name if it's a path! (see decorate-obj-member)
+        ; this is needed when checking if a path! is a function - it can be an op!, as well as a regular function!
+        if (not path? thing) [
+            return thing
         ]
+
+        ; if an op! is being made inside an object!, it needs the object's context in-front, like ctx361~f (#3482)
+        set [found? fpath base] search-obj thing
+
+        function-name-without-refinements: append copy fpath either base = obj-stack [ ;-- extract function access path without refinements
+            pick thing 1 + (length? fpath) - (length? obj-stack)
+        ][
+            pick thing length? fpath
+        ]
+        remove fpath
+
+        obj: find objects found?
+        object-name: obj/2
+
+        either all [function-name-without-refinements fpath] [
+            function-name: first find/tail function-name-without-refinements fpath
+            function-name-with-context: decorate-obj-member function-name object-name
+            function-name-with-context
+        ] [
+            thing
+        ]
+    ]
+	
+	infix?: func [pos [block! paren!] /local function-to-search-for specs left][
+        function-to-search-for: get-function-name pos/1
 		all [
 			not tail? pos
 			any [word? pos/1 path? pos/1]
@@ -3941,29 +3951,7 @@ red: context [
 
 			until [
 				op: pos/-1
-                function-to-search-for: either (path? op) [ ; if an op! is being made inside an object!, it needs the object's context in-front, like ctx361~f (#3482)
-                    set [found? fpath base] search-obj op
-
-                    function-name-without-refinements: append copy fpath either base = obj-stack [ ;-- extract function access path without refinements
-                        pick op 1 + (length? fpath) - (length? obj-stack)
-                    ][
-                        pick op length? fpath
-                    ]
-                    remove fpath
-
-                    obj: find objects found?
-                    object-name: obj/2
-
-                    either all [function-name-without-refinements fpath] [
-                        function-name: first find/tail function-name-without-refinements fpath
-                        function-name-with-context: decorate-obj-member function-name object-name
-                        function-name-with-context
-                    ] [
-                        op
-                    ]
-                ] [
-                    op
-                ]
+                function-to-search-for: get-function-name op
 				name: any [select op-actions function-to-search-for function-to-search-for]
 				insert ops name							;-- remember ops in left-to-right order
 				emit-open-frame function-to-search-for
