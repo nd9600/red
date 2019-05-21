@@ -1101,7 +1101,7 @@ red: context [
             ]
         ] [
             pos/1
-]
+        ]
 		all [
 			not tail? pos
 			any [word? pos/1 path? pos/1]
@@ -3934,14 +3934,53 @@ red: context [
 			ops: make block! 1
 			pos: end								    ;-- start from end of expression
 
+            print "is infix, skipping pos back until pos = pc"
+            ?? pos  ; [5]
+            ?? pc   ; [4 a/b 5]
+            ?? op-actions
+
 			until [
-				op: pos/-1			
-				name: any [select op-actions op op]
+				op: pos/-1
+                function-to-search-for: either (path? op) [ ; if an op! is being made inside an object!, it needs the object's context in-front, like ctx361~f (#3482)
+                    set [found? fpath base] search-obj op
+
+                    function-name-without-refinements: append copy fpath either base = obj-stack [ ;-- extract function access path without refinements
+                        pick op 1 + (length? fpath) - (length? obj-stack)
+                    ][
+                        pick op length? fpath
+                    ]
+                    remove fpath
+
+                    obj: find objects found?
+                    object-name: obj/2
+
+                    either all [function-name-without-refinements fpath] [
+                        function-name: first find/tail function-name-without-refinements fpath
+                        function-name-with-context: decorate-obj-member function-name object-name
+                        function-name-with-context
+                    ] [
+                        op
+                    ]
+                ] [
+                    op
+                ]
+				name: any [select op-actions function-to-search-for function-to-search-for]
 				insert ops name							;-- remember ops in left-to-right order
-				emit-open-frame op
+				emit-open-frame function-to-search-for
 				pos: skip pos -2						;-- process next previous op
 				pos = pc								;-- until we reach the beginning of expression
 			]
+
+            ; originally,
+            ; op is first a/b
+            ; name is a/b
+
+            ; now,
+            ; op is ctx361~b,
+            ; name is <anon363>
+
+            ?? ops
+
 			paths: length? paths-stack
 			comp-expression/no-infix					;-- fetch first left operand
 			do substitute
@@ -3955,6 +3994,7 @@ red: context [
 				
 				name: ops/1
 				spec: functions/:name
+
 				switch/default spec/1 [
 					function! [
 						emit decorate-func name
