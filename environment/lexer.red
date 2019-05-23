@@ -552,7 +552,7 @@ system/lexer: context [
 
 		base-2-rule: [
 			"2#{" (type: binary!) [
-				s: any [counted-newline | 8 [#"0" | #"1" ] | ws-no-count | comment-rule] e: #"}"
+				s: any [counted-newline | 8 [any [ws-no-count | comment-rule][#"0" | #"1" ]] | ws-no-count | comment-rule] e: #"}"
 				| (throw-error [binary! skip s -3])
 			] (base: 2)
 		]
@@ -943,7 +943,7 @@ system/lexer: context [
 		]
 
 		one-value: [any ws pos: literal-value pos: to end opt wrong-end]
-		any-value: [pos: any [some ws | literal-value]]
+		any-value: [pos: any [some ws | literal-value e: if (not same? pos e)]]
 		red-rules: [any-value any ws opt wrong-end]
 
 		if pre-load [do [pre-load src length]]
