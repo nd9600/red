@@ -2033,7 +2033,7 @@ red: context [
 				find shadow-funcs obj
 			]
 		]
-
+		
 		repend objects [								;-- register shadow object	
 			symbol										;-- object access word
 			obj: make object! words						;-- shadow object
@@ -2833,7 +2833,7 @@ red: context [
 			]
 			'else [name: generate-anon-name]			;-- unassigned function case
 		]
-
+		
 		pc: next pc
 		set [spec body] pc
 		case [
@@ -3266,7 +3266,7 @@ red: context [
 			pc: either set? [after][next pc]
 			exit
 		]
-
+		
 		if all [not set? defer: dispatch-ctx-keywords/with pc/1/1 path/1][
 			if block? defer [emit defer]
 			exit
@@ -3326,7 +3326,7 @@ red: context [
 				exit
 			]
 		]
-
+		
 		obj?: all [
 			not any [dynamic? find path integer!]
 			set [obj fpath] object-access? path
@@ -3901,7 +3901,6 @@ red: context [
 				pos: skip pos -2						;-- process next previous op
 				pos = pc								;-- until we reach the beginning of expression
 			]
-
 			paths: length? paths-stack
 			comp-expression/no-infix					;-- fetch first left operand
 			do substitute
@@ -3915,7 +3914,6 @@ red: context [
 				
 				name: ops/1
 				spec: functions/:name
-
 				switch/default spec/1 [
 					function! [
                         either spec/5 [emit-function/with name spec/5] [emit-function name]
@@ -4304,7 +4302,7 @@ red: context [
 		mark: tail output
 
 		comp-expression
-		
+				
 		if all [
 			paths < length? paths-stack
 			not find mark [stack/push pos]
@@ -4319,7 +4317,7 @@ red: context [
 		root: to logic! root 
 		if any [root close-path][out: tail output]
 		paths: length? paths-stack
-
+		
 		unless no-infix [
 			if check-infix-operators root [
 				if all [any [root close-path] paths < length? paths-stack][
@@ -4342,7 +4340,7 @@ red: context [
 			pc: any [find/reverse pc current-call back pc]
 			throw-error "missing argument"
 		]
-
+		
 		switch/default type?/word pc/1 [
 			issue!		[
 				either all [
@@ -4596,7 +4594,7 @@ red: context [
 		booting?: yes
 		comp-block
 		booting?: no
-
+		
 		mods: tail output
 		append output [#user-code]
 		foreach module needed [
@@ -4610,8 +4608,6 @@ red: context [
 
 		pc: code										;-- compile user code
 		user: tail output
-
-        print "##################################################################compiling user code"
 		comp-block
 		append output [#user-code]
 		
