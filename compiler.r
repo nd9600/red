@@ -3344,6 +3344,7 @@ red: context [
 			if block? defer [emit defer]
 		]
 
+
 		if obj-field?: all [
 			obj? 
 			word? last path								;-- not allow get-words to pass (#1141)
@@ -4299,9 +4300,9 @@ red: context [
 	comp-substitute-expression: has [paths mark][
 		paths: length? paths-stack
 		mark: tail output
-
+		
 		comp-expression
-				
+		
 		if all [
 			paths < length? paths-stack
 			not find mark [stack/push pos]
@@ -4453,6 +4454,7 @@ red: context [
 		while [not tail? pc][
 			expr: pc
 			either no-root [comp-expression][comp-expression/root]
+            
 			if all [verbose > 3 positive? size: offset? expr pc][probe copy/part expr size]
 			if verbose > 0 [emit-src-comment expr]
 			
