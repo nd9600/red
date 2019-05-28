@@ -107,7 +107,7 @@ red: context [
 	]
 
 	func-constructors: [
-		'func | 'function | 'does | 'has | 'routine | 'make 'function! | make! op
+		'func | 'function | 'does | 'has | 'routine | 'make 'function! | 'make 'op!
 	]
 
 	functions: make hash! [
@@ -820,7 +820,7 @@ red: context [
 		reduce [var set-var]
 	]
 	
-	add-symbol: func [name [word!] /with original /local sym id alias][
+	add-symbol: func [name [word! path!] /with original /local sym id alias][
 		unless find/case symbols name [
 			if find symbols name [
 				if find/case/skip aliases name 2 [exit]
@@ -1087,9 +1087,6 @@ red: context [
         if (not path? thing) [
             return thing
         ]
-        if (integer? load to-string back tail thing) [
-            return thing
-        ]
 
         ; if an op! is being made inside an object!, it needs the object's context in-front, like ctx361~f (#3482)
         set [found? fpath base] search-obj thing
@@ -1099,17 +1096,12 @@ red: context [
         ][
             pick thing length? fpath
         ]
-        ?? fpath
         remove fpath
 
         obj: find objects found?
         object-name: obj/2
 
         either all [function-name-without-refinements fpath] [
-            ?? function-name-without-refinements
-            ?? fpath
-            probe unset? fpath
-            probe type? fpath
             function-name: first find/tail function-name-without-refinements fpath
             function-name-with-context: decorate-obj-member function-name object-name
             function-name-with-context
