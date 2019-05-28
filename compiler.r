@@ -1084,7 +1084,6 @@ red: context [
             return f-name
         ]
 
-        ; if an op! is being made inside an object!, it needs the object's context in-front, like ctx361~f
         set [found? fpath base] search-obj f-name
 
         function-name-without-refinements: append copy fpath either base = obj-stack [ ;-- extract function access path without refinements
