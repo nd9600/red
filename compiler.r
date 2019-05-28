@@ -1080,8 +1080,6 @@ red: context [
         f-name
         /local path found? fpath base function-name-without-refinements function-name obj object-name function-name-with-context
     ] [
-        ; this returns the name of a function with context, which is just the word! if it's a word!, or the decorated function name if it's a path! (see decorate-obj-member)
-        ; this is needed when checking if a path! is a function - it can be an op!, as well as a regular function! (#3482)
         if (not path? f-name) [
             return f-name
         ]
