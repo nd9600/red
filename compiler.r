@@ -1075,23 +1075,24 @@ red: context [
 		no
 	]
 
-    get-function-name: func [
-        thing 
+    get-function-name-with-context: func [
+        "returns the name of a function possibly decorated with its context - it's just the word! if f-name is a word!, or the decorated function name if it's a path! (see decorate-obj-member) (#3482)"
+        f-name
         /local path found? fpath base function-name-without-refinements function-name obj object-name function-name-with-context
     ] [
         ; this returns the name of a function with context, which is just the word! if it's a word!, or the decorated function name if it's a path! (see decorate-obj-member)
-        ; this is needed when checking if a path! is a function - it can be an op!, as well as a regular function!
-        if (not path? thing) [
-            return thing
+        ; this is needed when checking if a path! is a function - it can be an op!, as well as a regular function! (#3482)
+        if (not path? f-name) [
+            return f-name
         ]
 
-        ; if an op! is being made inside an object!, it needs the object's context in-front, like ctx361~f (#3482)
-        set [found? fpath base] search-obj thing
+        ; if an op! is being made inside an object!, it needs the object's context in-front, like ctx361~f
+        set [found? fpath base] search-obj f-name
 
         function-name-without-refinements: append copy fpath either base = obj-stack [ ;-- extract function access path without refinements
-            pick thing 1 + (length? fpath) - (length? obj-stack)
+            pick f-name 1 + (length? fpath) - (length? obj-stack)
         ][
-            pick thing length? fpath
+            pick f-name length? fpath
         ]
         remove fpath
 
@@ -1103,12 +1104,12 @@ red: context [
             function-name-with-context: decorate-obj-member function-name object-name
             function-name-with-context
         ] [
-            thing
+            f-name
         ]
     ]
 	
 	infix?: func [pos [block! paren!] /local function-name-with-context specs left][
-        function-name-with-context: get-function-name pos/1
+        function-name-with-context: get-function-name-with-context pos/1
 		all [
 			not tail? pos
 			any [word? pos/1 path? pos/1]
@@ -3894,7 +3895,7 @@ red: context [
 			pos: end									;-- start from end of expression
 			until [
 				op: pos/-1
-				op-name-with-context: get-function-name op
+				op-name-with-context: get-function-name-with-context op
 				name: any [select op-actions op-name-with-context op-name-with-context]
 				insert ops name							;-- remember ops in left-to-right order
 				emit-open-frame op-name-with-context
