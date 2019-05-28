@@ -1107,12 +1107,12 @@ red: context [
         ]
     ]
 	
-	infix?: func [pos [block! paren!] /local function-to-search-for specs left][
-        function-to-search-for: get-function-name pos/1
+	infix?: func [pos [block! paren!] /local function-name-with-context specs left][
+        function-name-with-context: get-function-name pos/1
 		all [
 			not tail? pos
 			any [word? pos/1 path? pos/1]
-			specs: select functions function-to-search-for
+			specs: select functions function-name-with-context
 			'op! = specs/1
 			not all [									;-- check if a literal argument is not expected
 				word? left: pos/-1
