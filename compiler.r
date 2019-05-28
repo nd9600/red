@@ -1079,7 +1079,7 @@ red: context [
         thing 
         /local path found? fpath base function-name-without-refinements function-name obj object-name function-name-with-context
     ] [
-        ; this returns the name of a function, which is just the word! if it's a word!, or the decorated function name if it's a path! (see decorate-obj-member)
+        ; this returns the name of a function with context, which is just the word! if it's a word!, or the decorated function name if it's a path! (see decorate-obj-member)
         ; this is needed when checking if a path! is a function - it can be an op!, as well as a regular function!
         if (not path? thing) [
             return thing
@@ -3332,7 +3332,7 @@ red: context [
 			set [obj fpath] object-access? path
 			obj
 		]
-        
+		
 		if set? [
 			pc: next pc
 			either obj? [									;-- fetch assigned value earlier
@@ -3359,7 +3359,7 @@ red: context [
 				[[word/set-in-ctx (ctx) (index)]]
 				[[word/get-local  (ctx) (index)]]
 			] set?
-
+			
 			mark: none
 			either self? [
 				if all [not empty? locals-stack	container-obj?][
@@ -3891,13 +3891,13 @@ red: context [
 			end: search-expr-end pos					;-- recursive search of expression end
 			
 			ops: make block! 1
-			pos: end								    ;-- start from end of expression
+			pos: end									;-- start from end of expression
 			until [
 				op: pos/-1
-				function-to-search-for: get-function-name op
-				name: any [select op-actions function-to-search-for function-to-search-for]
+				op-name-with-context: get-function-name op
+				name: any [select op-actions op-name-with-context op-name-with-context]
 				insert ops name							;-- remember ops in left-to-right order
-				emit-open-frame function-to-search-for
+				emit-open-frame op-name-with-context
 				pos: skip pos -2						;-- process next previous op
 				pos = pc								;-- until we reach the beginning of expression
 			]
