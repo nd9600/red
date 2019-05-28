@@ -1,0 +1,58 @@
+[H[JREBOL/Core 2.7.8.4.3 (6-Jan-2011)
+Copyright 2011 REBOL Technologies
+REBOL is a Trademark of REBOL Technologies
+All rights reserved.
+
+Finger protocol loaded
+Whois protocol loaded
+Daytime protocol loaded
+SMTP protocol loaded
+ESMTP protocol loaded
+POP protocol loaded
+IMAP protocol loaded
+HTTP protocol loaded
+FTP protocol loaded
+NNTP protocol loaded
+Script: "Red command-line front-end" (none)
+Script: "Encap virtual filesystem" (21-Sep-2009)
+
+-=== Red Compiler 0.6.4 ===- 
+
+Compiling /home/nathan/repos/nd9600/red/blockOpTest.red ...
+...using libRedRT built on 21-May-2019/14:53:10+1:00
+in comp-expression
+in comp-path
+[
+    system/script/args: #system [
+        #either type = 'exe [stack/push get-cmdline-args] [none/push]
+    ] extract-boot-args
+]
+system/script/args:
+path: system/script/args:
+value: system
+path: script/args:
+value: script
+path: args:
+value: args
+calling obj-func-path? with
+system/script/args:
+in comp-expression
+in comp-expression
+##################################################################compiling user code
+in comp-expression
+in comp-expression
+FETCH-FUNCTIONS2
+[op! function [x y] [x + y]]
+[make op! function [x y] [x + y]]
+in fetch-functions
+pc: [op! function [x y] [x + y]]
+pos: [make op! function [x y] [x + y]]
+in either's true block
+src-name: make
+name: make||363
+name: make||363
+spec: none
+*** Red Compiler Internal Error: Script Error : clean-lf-deep expected blk argument of type: block paren 
+*** Where: fetch-functions 
+*** Near:  [clean-lf-deep pos/4/1] 
+
