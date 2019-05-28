@@ -3343,7 +3343,7 @@ red: context [
 			]
 			if block? defer [emit defer]
 		]
-
+		
 
 		if obj-field?: all [
 			obj? 
@@ -4454,7 +4454,7 @@ red: context [
 		while [not tail? pc][
 			expr: pc
 			either no-root [comp-expression][comp-expression/root]
-            
+			
 			if all [verbose > 3 positive? size: offset? expr pc][probe copy/part expr size]
 			if verbose > 0 [emit-src-comment expr]
 			
