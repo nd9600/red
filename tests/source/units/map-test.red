@@ -42,7 +42,7 @@ Red [
 	--test-- "map-remove-key-1"
 		mdk1-m: #(a: 1 b: 2 c: 3)
 		remove/key mdk1-m 'a
-		--assert error? try [mdk1-m/a]
+		--assert none? mdk1-m/a
 		--assert none = find keys-of mdk1-m 'a
 
 	--test-- "map-remove-key-2"
@@ -75,6 +75,10 @@ Red [
 		--assert 'ab = find/case mf3-m 'ab
 		--assert none = find/case mf3-m 'Ab
 
+	--test-- "map-find-4"
+		mf4-m: make map! [b 1]
+		--assert 'b	= find mf4-m first [b:]
+		--assert 'b	= find mf4-m first [b:]
 ===end-group===
 
 ===start-group=== "copy"

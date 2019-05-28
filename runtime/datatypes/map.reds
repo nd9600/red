@@ -516,7 +516,7 @@ map: context [
 		][
 			val: key + 1
 			if any [key = null val/header = MAP_KEY_DELETED][
-				fire [TO_ERROR(script invalid-path) path element]
+				val: none-value
 			]
 			val
 		]
@@ -629,7 +629,14 @@ map: context [
 		either any [
 			key = null
 			val/header = MAP_KEY_DELETED
-		][none-value][key]
+		][none-value][
+			if TYPE_OF(key) = TYPE_SET_WORD [
+				copy-cell key as red-value! map
+				key: as red-value! map
+				key/header: TYPE_WORD
+			]
+			key
+		]
 	]
 
 	;--- Navigation actions ---
