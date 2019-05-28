@@ -107,7 +107,7 @@ red: context [
 	]
 
 	func-constructors: [
-		'func | 'function | 'does | 'has | 'routine | 'make 'function!
+		'func | 'function | 'does | 'has | 'routine | 'make 'function! | make! op
 	]
 
 	functions: make hash! [
