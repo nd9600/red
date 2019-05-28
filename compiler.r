@@ -1388,19 +1388,13 @@ red: context [
 		]
 		invalid-spec: [throw-error ["invalid argument function to make op!:" mold copy/part at pos 4 2]]
 
-        print "in fetch-functions"
-        ?? pc
-        ?? pos
         either all [(pc/-1 == 'make) (pc/1 == first [op!])] [ ; if an op! is being made inside an object! (e.g. f: make op! function [x y] [x + y]), it needs to be compiled differently, so that it's added to 'functions with the context in-front of the op! name, like ctx361~f (#3482)
-            print "in either's true block"
             original: pos/1
             src-name: to word! original
             unless global?: all [lit-word? :original pc/-2 = 'set][
                 src-name: get-prefix-func src-name
             ]
-            ?? src-name
             name: check-func-name src-name
-            ?? name
             add-symbol/with word: to word! clean-lf-flag name to word! clean-lf-flag original
             unless any [
                 local-word? name
@@ -1408,14 +1402,10 @@ red: context [
             ][
                 add-global word
             ]
-            
         ] [
-            print "in either's false block"
             name: to word! pos/1
         ]
 		if find functions name [exit]					;-- mainly intended for 'make (hardcoded)
-
-        ?? name
 
 		switch type: pos/3 [
 			native! [nat?: yes if find intrinsics name [type: 'intrinsic!]]
@@ -1430,7 +1420,6 @@ red: context [
 				]
 			]
 		]
-        ?? spec
 		unless spec [
 			spec: either pos/3 = 'op! [
 				either entry: find functions proto [
@@ -1981,6 +1970,7 @@ red: context [
 					| skip
 				]
 			]
+
 			spec: make block! (length? words) / 2
 			forskip words 2 [append spec to word! words/1]
 		][
@@ -2043,6 +2033,7 @@ red: context [
 				find shadow-funcs obj
 			]
 		]
+
 		repend objects [								;-- register shadow object	
 			symbol										;-- object access word
 			obj: make object! words						;-- shadow object
@@ -3322,7 +3313,7 @@ red: context [
 			]
 		]
 		self?: path/1 = 'self
-        
+
 		if all [
 			not any [set? dynamic? find path integer!]
 			set [fpath symbol ctx] obj-func-path? path
@@ -3341,7 +3332,7 @@ red: context [
 			set [obj fpath] object-access? path
 			obj
 		]
-
+        
 		if set? [
 			pc: next pc
 			either obj? [									;-- fetch assigned value earlier
@@ -3886,7 +3877,6 @@ red: context [
 	][
 		if infix? pc [return false]						;-- infix op already processed,
 														;-- or used in prefix mode.
-
 		if infix? next pc [
 			substitute: [
 				if paths < length? paths-stack [
@@ -3902,10 +3892,9 @@ red: context [
 			
 			ops: make block! 1
 			pos: end								    ;-- start from end of expression
-
 			until [
 				op: pos/-1
-                function-to-search-for: get-function-name op
+				function-to-search-for: get-function-name op
 				name: any [select op-actions function-to-search-for function-to-search-for]
 				insert ops name							;-- remember ops in left-to-right order
 				emit-open-frame function-to-search-for
