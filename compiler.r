@@ -820,14 +820,13 @@ red: context [
 		reduce [var set-var]
 	]
 	
-	add-symbol: func [name [word! path!] /with original /local sym id alias][
+	add-symbol: func [name [word!] /with original /local sym id alias][
 		unless find/case symbols name [
 			if find symbols name [
 				if find/case/skip aliases name 2 [exit]
 				alias: decorate-series-var name
 				repend aliases [name alias]
 			]
-
 			sym: decorate-symbol name
 			id: 1 + ((length? symbols) / 2)
 			repend symbols [name reduce [sym id]]
@@ -940,7 +939,6 @@ red: context [
 		]
 
 		base: get-obj-base-word path/1
-
 		do search									;-- check if path is an absolute object path
 		if all [not found? 1 < length? obj-stack][
 			base: obj-stack
@@ -1023,7 +1021,6 @@ red: context [
 		origin: find-proto obj last fun
 		name:	either origin [select objects origin][obj/2]
 		symbol: decorate-obj-member first find/tail fun fpath name
-        
 		either find functions symbol [
 			fpath: next find path last fpath			;-- point to function name
 			reduce [
@@ -1357,18 +1354,11 @@ red: context [
 		reduce [list arity]
 	]
 	
-	get-prefix-func: func [
-        name [word!] 
-        /local path word ctx
-    ] [
+	get-prefix-func: func [name [word!] /local path word ctx][
 		if 1 < length? obj-stack [
 			path: copy obj-stack
 			while [1 < length? path][
-                word: in do path name
-				if all [
-                    word
-                    function! = get word
-                ] [
+				if all [word: in do path name function! = get word][
 					return prefix-func/with name path
 				]
 				remove back tail path
@@ -1385,8 +1375,6 @@ red: context [
 	
 	add-function: func [name [word!] spec [block!] /type kind [word!] /local refs arity pos][
 		set [refs arity] make-refs-table spec
-        print "APPENDING FUNCTION3"
-        probe reduce [name reduce [any [kind 'function!] arity spec refs]]
 		repend functions [name reduce [any [kind 'function!] arity spec refs]]
 	]
 	
@@ -1459,8 +1447,6 @@ red: context [
 		]
 		if nat? [prepare-typesets name spec]
 		set [refs arity] make-refs-table spec
-        print "APPENDING FUNCTION4"
-        probe reduce [name reduce [type arity spec refs]]
 		repend functions [name reduce [type arity spec refs]]
 		defer
 	]
@@ -2057,7 +2043,6 @@ red: context [
 				find shadow-funcs obj
 			]
 		]
-
 		repend objects [								;-- register shadow object	
 			symbol										;-- object access word
 			obj: make object! words						;-- shadow object
@@ -2856,7 +2841,8 @@ red: context [
 				]
 			]
 			'else [name: generate-anon-name]			;-- unassigned function case
-		]		
+		]
+
 		pc: next pc
 		set [spec body] pc
 		case [
@@ -2897,8 +2883,6 @@ red: context [
 		]
 		
 		octx: either 1 < length? obj-stack [select objects do obj-stack]['null]
-        print "APPENDING FUNCTION6"
-        probe octx
 		if all [global? octx <> 'null][append last functions octx]	;-- add origin obj ctx to function's entry
 		
 		defer: compose [
@@ -3292,28 +3276,14 @@ red: context [
 			exit
 		]
 
-        print "in comp-path"
-        probe pc
-        probe pc/1
-		
-        ; pc is [a/b 4 5], so pc/1/1 is 'a
-        ; dispatch-ctx-keywords checks if the first bit of the path! is an object, and if it is, it calls "comp-context/with a" - if that returns a block!, it adds the block! to the output
-        ;       if the first bit of the path! is one of the right types (not a word!), then it returns true
-        ; if path isn't a set-path! and is one of the right types, it returns true
-        ; 'a is a word!, not an object, so it returns false
-
 		if all [not set? defer: dispatch-ctx-keywords/with pc/1/1 path/1][
 			if block? defer [emit defer]
 			exit
 		]
 		
 		forall path [									;-- preprocessing path
-            ?? path
 			switch/default type?/word value: path/1 [
-
-                ; adds all parts of the path! to the symbols table if they're not there already
 				word! [
-                    ; if it's not a set-word!, and we haven't seen a get-word! yet, and some other things, do stuff
 					if all [
 						not set? not get?
 						all [
@@ -3322,7 +3292,6 @@ red: context [
 							name: alter
 						]
 					][
-                        probe "in all"
 						if head? path [
 							if alter: select-ssa name [entry: find functions alter]
 							pc: next pc
@@ -3337,8 +3306,6 @@ red: context [
 							exit
 						]
 					]
-                    ; adds 'a and 'b as symbols if it needs to
-                    ?? value
 					add-symbol value					;-- ensure the word is defined in global context
 				]
 				get-word! [
@@ -3356,16 +3323,13 @@ red: context [
 		]
 		self?: path/1 = 'self
         
-        print "calling obj-func-path? with" probe path
-
 		if all [
 			not any [set? dynamic? find path integer!]
-			set [fpath symbol ctx] probe obj-func-path? path
+			set [fpath symbol ctx] obj-func-path? path
 		][
 			either get? [
 				check-new-func-name path symbol ctx
 			][
-                probe "SHOULD PROBABLY CHANGE HERE"
 				pc: next pc
 				comp-call/with fpath functions/:symbol symbol ctx
 				exit
@@ -3396,7 +3360,6 @@ red: context [
 			any [self? (length? path) = length? fpath]	;-- allow only object-path/field forms
 		][
 			ctx: second obj: find objects obj
-
 			unless index: get-word-index/with last path ctx [
 				throw-error ["word" last path "not defined in" path]
 			]
@@ -3787,7 +3750,6 @@ red: context [
 				if start [emit start]
 				unless any [obj-bound? no-check?][check-redefined name original]
 				check-cloned-function name
-
 				comp-substitute-expression				;-- fetch a value (2nd argument)
 			]
 		]
@@ -3848,9 +3810,6 @@ red: context [
 				any-function? pc/1
 			][
 				if pc/1 = 'routine! [throw-error "MAKE routine! is not supported"]
-                print "FETCH-FUNCTIONS2"
-                probe pc
-                probe skip pc -2
 				defer: fetch-functions skip pc -2		;-- extract functions definitions
 				pc: back pc
 				comp-word/final
@@ -3944,11 +3903,6 @@ red: context [
 			ops: make block! 1
 			pos: end								    ;-- start from end of expression
 
-            print "is infix, skipping pos back until pos = pc"
-            ?? pos  ; [5]
-            ?? pc   ; [4 a/b 5]
-            ?? op-actions
-
 			until [
 				op: pos/-1
                 function-to-search-for: get-function-name op
@@ -3958,16 +3912,6 @@ red: context [
 				pos: skip pos -2						;-- process next previous op
 				pos = pc								;-- until we reach the beginning of expression
 			]
-
-            ; originally,
-            ; op is first a/b
-            ; name is a/b
-
-            ; now,
-            ; op is ctx361~b,
-            ; name is <anon363>
-
-            ?? ops
 
 			paths: length? paths-stack
 			comp-expression/no-infix					;-- fetch first left operand
@@ -4370,8 +4314,6 @@ red: context [
 		paths: length? paths-stack
 		mark: tail output
 
-        print "in comp-substitute-expression"
-		
 		comp-expression
 		
 		if all [
@@ -4389,8 +4331,6 @@ red: context [
 		if any [root close-path][out: tail output]
 		paths: length? paths-stack
 
-        print "in comp-expression"
-		
 		unless no-infix [
 			if check-infix-operators root [
 				if all [any [root close-path] paths < length? paths-stack][
@@ -4684,9 +4624,6 @@ red: context [
 
         print "##################################################################compiling user code"
 		comp-block
-        prin "functions: "
-        print mold skip tail functions -20
-        probe "output2d:" probe output
 		append output [#user-code]
 		
 		main: output
