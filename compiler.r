@@ -274,7 +274,7 @@ red: context [
 		]
 	]
 	
-	local-word?: func [name [word!]][
+	local-word?: func [name [word! get-word!]][
 		all [not empty? locals-stack find last locals-stack name]
 	]
 	
@@ -1085,6 +1085,9 @@ red: context [
         ]
 
         set [found? fpath base] search-obj f-name
+        if not all [found? fpath base] [
+            return f-name
+        ]
 
         function-name-without-refinements: append copy fpath either base = obj-stack [ ;-- extract function access path without refinements
             pick f-name 1 + (length? fpath) - (length? obj-stack)
