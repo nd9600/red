@@ -162,7 +162,7 @@ system-dialect: make-profilable context [
 			push	[1	inline	- [a [any-type!]]]
 			pop		[0	inline	- [						   return: [integer!]]]
 			throw	[1	inline	- [n [integer!]]]
-			log-b	[1	native	- [n [number!] return: [integer!]]]
+			log-b	[1	native	- [n [number!]  return: [integer!]]]
 		]
 		
 		repend functions [shift-right-sym copy functions/-**]
@@ -414,7 +414,7 @@ system-dialect: make-profilable context [
 			none
 		]
 		
-		system-action?: func [path [path!] /local expr][
+		system-action?: func [path [path!] /local expr port-type][
 			if path/1 = 'system [
 				switch/default path/2 [
 					stack [
@@ -441,6 +441,38 @@ system-dialect: make-profilable context [
 							]
 							;push []
 							;pop  []
+						][false]
+					]
+					io [
+						switch/default path/3 [
+							read [
+								pc: next pc
+								fetch-expression/final/keep 'read-io
+								if any [none? last-type last-type/1 <> 'pointer!][
+									throw-error "system/io/read expects a pointer! as port argument"
+								]
+								emitter/target/emit-io-read last-type/2/1
+								last-type: last-type/2
+								true
+							]
+							write [
+								pc: next pc					 ;-- fetch port argument
+								fetch-expression/final/keep 'write-io
+								if any [none? last-type last-type/1 <> 'pointer!][
+									throw-error "system/io/write expects a pointer! as port argument"
+								]
+								emitter/target/emit-save-last ;-- save port argument on stack
+								port-type: last-type/2/1
+								
+								fetch-expression/final/keep 'write-io ;-- fetch data argument
+								if any [none? last-type last-type/1 <> port-type][
+									throw-error "system/io/write expects data of same type as port pointed value"
+								]
+								emitter/target/emit-restore-last ;-- restore port argument
+								emitter/target/emit-io-write port-type
+								last-type: none
+								true
+							]
 						][false]
 					]
 				][false]
@@ -1777,6 +1809,18 @@ system-dialect: make-profilable context [
 			fetch-expression #u16
 		]
 		
+		process-inline: func [code][
+			if block? code [
+				last-type: select code return-def
+				unless catch [parse last-type type-spec][
+					throw-error ["#inline directive returned type invalid:" mold last-type]
+				]
+				code: code/1
+			]
+			unless binary? code [throw-error "#inline directive requires a binary! argument"]
+			append emitter/code-buf code
+		]
+		
 		comp-chunked: func [body [block!]][
 			emitter/chunks/start
 			do body
@@ -1795,6 +1839,7 @@ system-dialect: make-profilable context [
 				#enum	   [process-enum pc/2 pc/3 pc: skip pc 3]
 				#verbose   [set-verbose-level pc/2 pc: skip pc 2 none]
 				#u16	   [process-u16 	  pc]
+				#inline	   [process-inline pc/2	   pc: skip pc 2 <last>]
 				#user-code [user-code?: not user-code? pc: next pc]
 				#build-date[change pc mold use [d][d: now d: d - d/zone d/zone: none d]]	;-- UTC
 				#script	   [							;-- internal compiler directive
