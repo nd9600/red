@@ -42,7 +42,7 @@ system-dialect: make-profilable context [
 		format:				none						;-- file format
 		type:				'exe						;-- file type ('exe | 'dll | 'lib | 'obj | 'drv)
 		target:				'IA-32						;-- CPU target
-		cpu-version:		6.0							;-- CPU version (default: Pentium Pro)
+		cpu-version:		6.0							;-- CPU version (default for IA-32: 6.0, Pentium Pro, for ARM: 5.0)
 		verbosity:			0							;-- logs verbosity level
 		sub-system:			'console					;-- 'GUI | 'console
 		runtime?:			yes							;-- include Red/System runtime
@@ -147,8 +147,8 @@ system-dialect: make-profilable context [
 			and		[2	op		- [a [bit-set!] b [bit-set!] return: [bit-set!]]]
 			or		[2	op		- [a [bit-set!] b [bit-set!] return: [bit-set!]]]
 			xor		[2	op		- [a [bit-set!] b [bit-set!] return: [bit-set!]]]
-			//		[2	op		- [a [any-number!] b [any-number!] return: [any-number!]]]		;-- modulo
-      (to-word "%")	[2	op		- [a [any-number!] b [any-number!] return: [any-number!]]]		;-- remainder (real syntax: %)
+			//		[2	op		- [a [number!] b [number!] return: [number!]]]		;-- modulo
+      (to-word "%")	[2	op		- [a [number!] b [number!] return: [number!]]]		;-- remainder (real syntax: %)
 			>>		[2	op		- [a [number!] b [number!] return: [number!]]]		;-- shift right signed
 			<<		[2	op		- [a [number!] b [number!] return: [number!]]]		;-- shift left signed
 			-**		[2	op		- [a [number!] b [number!] return: [number!]]]		;-- shift right unsigned
@@ -437,6 +437,16 @@ system-dialect: make-profilable context [
 									throw-error "system/stack/free expects an integer! argument"
 								]
 								emitter/target/emit-free-stack
+								true
+							]
+							push-all [
+								pc: next pc
+								emitter/target/emit-push-all
+								true
+							]
+							pop-all [
+								pc: next pc
+								emitter/target/emit-pop-all
 								true
 							]
 							;push []
@@ -733,7 +743,7 @@ system-dialect: make-profilable context [
 			]
 		]
 		
-		get-type: func [value /local type][
+		get-type: func [value /local type name][
 			switch/default type?/word value [
 				word! 	 [resolve-type value]
 				integer! [[integer!]]
@@ -755,14 +765,20 @@ system-dialect: make-profilable context [
 				tag!	 [either value = <last> [last-type][[logic!]]]
 				string!	 [[c-string!]]
 				get-word! [
-					type: resolve-type to word! value
+					name: to word! value
 					
+					if none? type: any [
+						resolve-type name
+						all [ns-path resolve-type ns-prefix name]
+					][
+						throw-error ["undefined symbol:" mold value]
+					]
 					switch/default type/1 [
 						function! [type]
 						integer! byte! float! float32! [compose/deep [pointer! [(type/1)]]]
 					][
 						with-alias-resolution off [
-							type: resolve-type to word! value
+							type: resolve-type name
 						]
 						either struct-by-value? type [
 							type
@@ -783,6 +799,7 @@ system-dialect: make-profilable context [
 							find [float! float64! c-string!] first type: get-type value/1
 							type: [integer!]
 						]
+						if type/1 = 'function! [type: [integer!]] ;-- forces pointer! [integer!] if function reference
 						next next reduce ['array! length? value 'pointer! type]	;-- hide array size
 					]
 				]
@@ -1053,7 +1070,7 @@ system-dialect: make-profilable context [
 			parse list [
 				some [
 					p: word! (check-enum-symbol p) :p ['true | 'false] (p/1: do p/1)
-					| string! | char! | integer! | decimal!
+					| string! | char! | integer! | decimal! | get-word! | p: 'null (p/1: 0)
 				] | (throw-error ["invalid literal array content:" mold list])
 			]
 			to paren! list

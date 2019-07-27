@@ -16,8 +16,8 @@ Red/System [
 ;;		-28  : Cursor handle
 ;;		-24  : Direct2D target interface
 ;;			   base-layered: caret's owner handle
-;;		-20  : evolved-base-layered: child handle
-;;		-16  : base-layered: owner handle
+;;		-20  : evolved-base-layered: child handle, window: modal window's parent handle
+;;		-16  : base-layered: owner handle, window: border width and height
 ;;		-12  : base-layered: clipped? flag, caret? flag, d2d? flag, ime? flag
 ;;		 -8  : base: pos X/Y in pixel
 ;;			   window: pos X/Y in pixel
@@ -300,7 +300,7 @@ get-text-size: func [
 	if null? hFont [hFont: default-font]
 	saved: SelectObject hwnd hFont
 	GetClientRect hWnd rc
-	render-text values hwnd dc rc str bbox
+	render-text values hwnd dc rc str :bbox
 
 	SelectObject hwnd saved
 	ReleaseDC hwnd dc
@@ -584,6 +584,8 @@ free-faces: func [
 	type: as red-word! values + FACE_OBJ_TYPE
 	sym: symbol/resolve type/symbol
 
+	if sym = window [ShowWindow handle SW_HIDE]			;-- hide it first for better User experience
+
 	rate: values + FACE_OBJ_RATE
 	if TYPE_OF(rate) <> TYPE_NONE [change-rate handle none-value]
 
@@ -620,9 +622,9 @@ free-faces: func [
 				if dc <> 0 [DeleteDC as handle! dc]			;-- delete cached dc
 			]
 			flags: get-flags as red-block! values + FACE_OBJ_FLAGS
-			;if flags and FACET_FLAGS_MODAL <> 0 [
-			;	SetActiveWindow GetWindow handle GW_OWNER
-			;]
+			if flags and FACET_FLAGS_MODAL <> 0 [
+				SetActiveWindow as handle! GetWindowLong handle wc-offset - 20
+			]
 			dc: GetWindowLong handle wc-offset - 24
 			if dc <> 0 [
 				either (GetWindowLong handle wc-offset - 12) and BASE_FACE_IME <> 0 [
@@ -896,25 +898,10 @@ window-border-info?: func [
 
 init-window: func [										;-- post-creation settings
 	handle  [handle!]
-	bits	[integer!]
-	/local
-		x		[integer!]
-		y		[integer!]
-		cx		[integer!]
-		cy		[integer!]
-		owner	[handle!]
-		modes	[integer!]
 ][
 	SetWindowLong handle wc-offset - 4 0
+	SetWindowLong handle wc-offset - 16 0
 	SetWindowLong handle wc-offset - 24 0
-
-	modes: SWP_NOZORDER
-
-	if bits and FACET_FLAGS_MODAL <> 0 [
-		modes: 0
-		owner: find-last-window
-		if owner <> null [SetWindowLong handle GWL_HWNDPARENT as-integer owner]
-	]
 ]
 
 set-selected-focus: func [
@@ -1465,6 +1452,8 @@ OS-make-view: func [
 
 			if bits and FACET_FLAGS_NO_TITLE  <> 0 [flags: WS_POPUP or WS_BORDER]
 			if bits and FACET_FLAGS_NO_BORDER <> 0 [flags: WS_POPUP]
+			if size/x < 0 [size/x: 200]
+			if size/y < 0 [size/y: 200]
 			rc/left: 0
 			rc/top: 0
 			rc/right:  dpi-scale size/x
@@ -1472,6 +1461,9 @@ OS-make-view: func [
 			AdjustWindowRectEx rc flags menu-bar? menu window ws-flags
 			rc/right: rc/right - rc/left
 			rc/bottom: rc/bottom - rc/top
+			if bits and FACET_FLAGS_MODAL <> 0 [
+				parent: as-integer find-last-window
+			]
 		]
 		true [											;-- search in user-defined classes
 			p: find-class type
@@ -1603,17 +1595,22 @@ OS-make-view: func [
 		][
 			init-drop-list handle data caption selected sym = drop-list
 		]
-		sym = field [set-hint-text handle options]
+		sym = field [
+			set-hint-text handle options
+			if TYPE_OF(selected) <> TYPE_NONE [change-selection handle selected values]
+		]
 		sym = area	 [
 			set-area-options handle options
 			change-text handle values sym
+			if TYPE_OF(selected) <> TYPE_NONE [change-selection handle selected values]
 		]
 		sym = rich-text [
 			init-base-face handle parent values alpha?
 			SetWindowLong handle wc-offset - 12 BASE_FACE_D2D or BASE_FACE_IME
 		]
 		sym = window [
-			init-window handle bits
+			init-window handle
+			SetWindowLong handle wc-offset - 20 parent
 			#if sub-system = 'gui [
 				with clipboard [
 					if null? main-hWnd [main-hWnd: handle]
@@ -1733,8 +1730,6 @@ change-offset: func [
 		offset	[tagPOINT]
 		values	[red-value!]
 		layer?	[logic!]
-		x		[integer!]
-		y		[integer!]
 		pos-x	[integer!]
 		pos-y	[integer!]
 ][
@@ -1753,10 +1748,6 @@ change-offset: func [
 		SetCaretPos pos-x pos-y
 		set-ime-pos hWnd pos-x pos-y
 	]
-
-	x: 0
-	y: 0
-	if type = window [window-border-info? hWnd :x :y null null]
 
 	if all [not win8+? type = base][
 		values: get-face-values hWnd
@@ -1796,7 +1787,7 @@ change-offset: func [
 	SetWindowPos 
 		hWnd
 		as handle! 0
-		x + pos-x y + pos-y
+		pos-x pos-y
 		0 0
 		flags
 	if type = tab-panel [update-tab-contents hWnd FACE_OBJ_OFFSET]
@@ -1887,14 +1878,13 @@ change-enabled: func [
 		bool [red-logic!]
 ][
 	bool: as red-logic! values + FACE_OBJ_ENABLED?
-	either all [
+	if all [
 		type = base
 		(BASE_FACE_CARET and GetWindowLong hWnd wc-offset - 12) <> 0
 	][
 		change-visible hWnd values bool/value base
-	][
-		EnableWindow hWnd bool/value
 	]
+	EnableWindow hWnd bool/value
 ]
 
 change-visible: func [
